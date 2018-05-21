@@ -1,0 +1,6 @@
+*.exe
+/__history/
+/Dane/*.fv
+/Dane/*.baz
+/Dane/*.txt
+/Dane/*.json
