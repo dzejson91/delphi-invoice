@@ -29,29 +29,38 @@ object Forma: TForma
   object BtnContractor: TButton
     Left = 119
     Top = 8
-    Width = 114
+    Width = 106
     Height = 25
     Caption = 'Kontrachenci'
     TabOrder = 1
     OnClick = Listanabywcw1Click
   end
   object BtnArchive: TButton
-    Left = 239
+    Left = 230
     Top = 8
-    Width = 90
+    Width = 105
     Height = 25
     Caption = 'Archiwum'
     TabOrder = 2
     OnClick = Archiwumfaktur1Click
   end
   object btnExportJson: TButton
-    Left = 335
-    Top = 8
-    Width = 161
+    Left = 119
+    Top = 39
+    Width = 105
     Height = 25
-    Caption = 'Export do pliku JSON'
+    Caption = 'Generuj JSON'
     TabOrder = 3
     OnClick = btnExportJsonClick
+  end
+  object BtnJPK: TButton
+    Left = 8
+    Top = 39
+    Width = 105
+    Height = 25
+    Caption = 'Generuj JPK'
+    TabOrder = 4
+    OnClick = BtnJPKClick
   end
   object MainMenu: TMainMenu
     Left = 376

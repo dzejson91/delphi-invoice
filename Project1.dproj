@@ -36,9 +36,13 @@
       <Form>Drukuj</Form>
     </DCCReference>
     <DCCReference Include="Functions.pas" />
+    <DCCReference Include="JPKForm.pas">
+      <Form>JPKForma</Form>
+    </DCCReference>
     <DCCReference Include="Kontrahenci.pas">
       <Form>Kontrahent</Form>
     </DCCReference>
+    <DCCReference Include="SchemaJPK.pas" />
     <DCCReference Include="TowarUsluga.pas">
       <Form>Towar</Form>
     </DCCReference>

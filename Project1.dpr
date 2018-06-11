@@ -2,7 +2,7 @@ program Project1;
 
 uses
   Forms,
-  Unit1 in 'Unit1.pas' {Forma}, 
+  Unit1 in 'Unit1.pas' {Forma},
   uLkJSON in 'uLkJSON.pas',
   Wlasciciele in 'Wlasciciele.pas' {Wlasciciel},
   Kontrahenci in 'Kontrahenci.pas' {Kontrahent},
@@ -11,7 +11,9 @@ uses
   Drukowanie in 'Drukowanie.pas' {Drukuj},
   Ustawienia in 'Ustawienia.pas' {Ustaw},
   Archiwum in 'Archiwum.pas' {Archiw},
-  Functions in 'Functions.pas';
+  Functions in 'Functions.pas',
+  SchemaJPK in 'SchemaJPK.pas',
+  JPKForm in 'JPKForm.pas' {JPKForma};
 
 {$R *.res}
 
@@ -26,5 +28,6 @@ begin
   Application.CreateForm(TDrukuj, Drukuj);
   Application.CreateForm(TUstaw, Ustaw);
   Application.CreateForm(TArchiw, Archiw);
+  Application.CreateForm(TJPKForma, JPKForma);
   Application.Run;
 end.

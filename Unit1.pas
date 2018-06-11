@@ -13,6 +13,26 @@ const
   PlikFV  = 'Faktury.fv';
   PlikNT  = 'Towary.txt';
 
+  Wojewodztwa: array [0..16] of string = (
+    '',
+    'dolnoœl¹skie',
+    'kujawsko-pomorskie',
+    'lubelskie',
+    'lubuskie',
+    '³ódzkie',
+    'ma³opolskie',
+    'mazowieckie',
+    'opolskie',
+    'podkarpackie',
+    'podlaskie',
+    'pomorskie',
+    'œl¹skie',
+    'œwiêtokrzyskie',
+    'warmiñsko-mazurskie',
+    'wielkopolskie',
+    'zachodniopomorskie'
+  );
+
 type
 
   TKlient = record
@@ -104,6 +124,7 @@ type
     BtnArchive: TButton;
     btnExportJson: TButton;
     SaveDialog: TSaveDialog;
+    BtnJPK: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Zamknij1Click(Sender: TObject);
     procedure Listasprzedawcw1Click(Sender: TObject);
@@ -114,6 +135,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure logoClick(Sender: TObject);
     procedure btnExportJsonClick(Sender: TObject);
+    procedure BtnJPKClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -147,7 +169,7 @@ var
 
 implementation
 
-uses Wlasciciele, Kontrahenci, Wystawienie, Ustawienia, Archiwum;
+uses Wlasciciele, Kontrahenci, Wystawienie, Ustawienia, Archiwum, JPKForm;
 
 {$R *.dfm}
 
@@ -443,6 +465,11 @@ begin
     ZapiszFVJSON(SaveDialog.FileName);
     MessageBox(0, 'Zapisano pomyœlnie', 'Eksport danych do pliku JSON', MB_OK);
   end;
+end;
+
+procedure TForma.BtnJPKClick(Sender: TObject);
+begin
+  JPKForma.ShowModal;
 end;
 
 procedure TForma.Listasprzedawcw1Click(Sender: TObject);
