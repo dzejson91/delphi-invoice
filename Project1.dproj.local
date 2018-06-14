@@ -5,5 +5,6 @@
     <Transaction>2018.06.11 20:18:15.191.pas,C:\Users\Krystian\Downloads\FV\jpk_schema.pas=C:\Users\Krystian\Downloads\FV\SchemaJPK.pas</Transaction>
     <Transaction>2018.06.11 20:27:06.168.pas,C:\Users\Krystian\Downloads\FV\Unit2.pas=C:\Users\Krystian\Downloads\FV\JPKForm.pas</Transaction>
     <Transaction>2018.06.11 20:27:06.168.dfm,C:\Users\Krystian\Downloads\FV\Unit2.dfm=C:\Users\Krystian\Downloads\FV\JPKForm.dfm</Transaction>
+    <Transaction>2018.06.13 22:38:10.593.pas,C:\Users\Krystian\Downloads\FV\data_schema.pas=C:\Users\Krystian\Downloads\FV\app_schema.pas</Transaction>
   </Transactions>
 </BorlandProject>

@@ -13,7 +13,8 @@ uses
   Archiwum in 'Archiwum.pas' {Archiw},
   Functions in 'Functions.pas',
   SchemaJPK in 'SchemaJPK.pas',
-  JPKForm in 'JPKForm.pas' {JPKForma};
+  JPKForm in 'JPKForm.pas' {JPKForma},
+  app_schema in 'app_schema.pas';
 
 {$R *.res}
 

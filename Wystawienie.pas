@@ -83,7 +83,7 @@ begin
   if Spr then
     K:=Sprzed[i] else
     K:=Kontra[i];
-  Result:=Copy(K.NIP, 3, 10)+', '+K.Identyf+', '+K.Nazwa1+' '+K.Nazwa2+', '+K.Kod+' '+K.Miasto+' '+K.Ulica+' '+K.NrDomu;
+  Result := K.NIP + ', '+K.Identyf+', '+K.Nazwa1+' '+K.Nazwa2+', '+K.Kod+' '+K.Miasto+' '+K.Ulica+' '+K.NrDomu;
 end;
 
 function GetSearchInfo(i: Word): String;
@@ -213,6 +213,12 @@ begin
     F.Towar[i].WartVAT:=StrToFloat(Lista.Items[i].SubItems.Strings[8]);
     F.Towar[i].WartBrutto:=StrToFloat(Lista.Items[i].SubItems.Strings[9]);
     if i = 0 then F.Dane.Kurs.Euro:=not F.Towar[i].PLN;
+  end;
+
+  if NrFakExist(F.Dane.NrFak) then
+  begin
+    if MessageBox(0, 'Numer faktury jest ju¿ u¿ywany! Jesteœ pewnien(a)?', PChar(Application.Title), MB_ICONQUESTION+MB_YESNO) <> 6 then
+      Exit;
   end;
 
   if (Sender as TButton).Tag = 1 then

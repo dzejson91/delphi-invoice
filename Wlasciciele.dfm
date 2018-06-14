@@ -69,17 +69,13 @@ object Wlasciciel: TWlasciciel
     Top = 171
     Width = 581
     Height = 165
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alCustom
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 1
     OnExit = PagesExit
     object TabSheet1: TTabSheet
       Caption = 'Dane podstawowe'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label1: TLabel
         Left = 8
         Top = 8
@@ -157,8 +153,6 @@ object Wlasciciel: TWlasciciel
         Top = 68
         Width = 57
         Height = 24
-        EditMask = '99-999;0;_'
-        MaxLength = 6
         TabOrder = 4
         OnExit = IdentExit
       end
@@ -203,8 +197,6 @@ object Wlasciciel: TWlasciciel
         Top = 34
         Width = 118
         Height = 24
-        EditMask = '>cc 9999999999;0;_'
-        MaxLength = 13
         TabOrder = 1
         Text = 'PL'
         OnExit = IdentExit
@@ -233,7 +225,7 @@ object Wlasciciel: TWlasciciel
         Width = 121
         Height = 24
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 16
         ItemIndex = 0
         TabOrder = 8
         Items.Strings = (
@@ -329,10 +321,6 @@ object Wlasciciel: TWlasciciel
     object TabSheet3: TTabSheet
       Caption = 'Uwagi'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Uwagi: TMemo
         Left = 0
         Top = 0

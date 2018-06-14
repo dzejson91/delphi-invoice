@@ -10,11 +10,13 @@ object Forma: TForma
   Font.Height = -13
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  KeyPreview = True
   Menu = MainMenu
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyUp = FormKeyUp
   PixelsPerInch = 96
   TextHeight = 16
   object BtnCreateFV: TButton
@@ -51,6 +53,7 @@ object Forma: TForma
     Height = 25
     Caption = 'Generuj JSON'
     TabOrder = 3
+    Visible = False
     OnClick = btnExportJsonClick
   end
   object BtnJPK: TButton
@@ -60,7 +63,38 @@ object Forma: TForma
     Height = 25
     Caption = 'Generuj JPK'
     TabOrder = 4
+    Visible = False
     OnClick = BtnJPKClick
+  end
+  object btnParseXML: TButton
+    Left = 230
+    Top = 70
+    Width = 105
+    Height = 25
+    Caption = 'Parse to XML'
+    TabOrder = 5
+    Visible = False
+    OnClick = btnParseXMLClick
+  end
+  object btnLoadXML: TButton
+    Left = 8
+    Top = 70
+    Width = 105
+    Height = 25
+    Caption = 'Load from XML'
+    TabOrder = 6
+    Visible = False
+    OnClick = btnLoadXMLClick
+  end
+  object btnSaveXML: TButton
+    Left = 119
+    Top = 70
+    Width = 105
+    Height = 25
+    Caption = 'Save to XML'
+    TabOrder = 7
+    Visible = False
+    OnClick = btnSaveXMLClick
   end
   object MainMenu: TMainMenu
     Left = 376

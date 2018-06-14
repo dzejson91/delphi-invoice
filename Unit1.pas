@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, StdCtrls, uLkJSON;
+  Dialogs, Menus, StdCtrls, uLkJSON, app_schema;
 
 const
   PlikSpr = 'Sprzedawcy.baz';
@@ -12,6 +12,7 @@ const
   PlikSet = 'Ustawienia.dat';
   PlikFV  = 'Faktury.fv';
   PlikNT  = 'Towary.txt';
+  PlikXML = 'App.xml';
 
   Wojewodztwa: array [0..16] of string = (
     '',
@@ -125,6 +126,9 @@ type
     btnExportJson: TButton;
     SaveDialog: TSaveDialog;
     BtnJPK: TButton;
+    btnParseXML: TButton;
+    btnLoadXML: TButton;
+    btnSaveXML: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Zamknij1Click(Sender: TObject);
     procedure Listasprzedawcw1Click(Sender: TObject);
@@ -136,6 +140,10 @@ type
     procedure logoClick(Sender: TObject);
     procedure btnExportJsonClick(Sender: TObject);
     procedure BtnJPKClick(Sender: TObject);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure btnParseXMLClick(Sender: TObject);
+    procedure btnLoadXMLClick(Sender: TObject);
+    procedure btnSaveXMLClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -157,6 +165,10 @@ type
   end;
 
 var
+  App: IXMLAplikacjaType;
+
+  PXMLKursType: ^IXMLKursType;
+
   Forma: TForma;
   Path: String;
   Sprzed: array of TKlient; SprzedIle: Word;
@@ -166,12 +178,106 @@ var
   Setup: TSetup;
 
   function Maska(S, Mask: String): Boolean;
+  function NrFakExist(NrFak: String): Boolean;
 
 implementation
 
 uses Wlasciciele, Kontrahenci, Wystawienie, Ustawienia, Archiwum, JPKForm;
 
 {$R *.dfm}
+
+procedure TKlientToXMLKlient(k: TKlient; xk: IXMLKlientType);
+begin
+  xk.Identyf := k.Identyf;
+  xk.Nazwa1 := k.Nazwa1;
+  xk.Nazwa2 := Trim(k.Nazwa2);
+  xk.NIP := Trim(k.NIP); 
+  xk.Kod := Trim(k.Kod);
+
+  if (Length(xk.NIP) = 0) and (pos('NIP:', xk.Nazwa2) = 1) then
+  begin
+    xk.NIP := Trim(Copy(xk.Nazwa2, 5, Length(xk.Nazwa2)));
+    xk.Nazwa2 := '';
+  end;   
+
+  if (Length(xk.NIP) = 0) and (pos('ATU', xk.Nazwa2) = 1) then
+  begin
+    xk.NIP := StringReplace(xk.Nazwa2, ' ', '', []);
+    xk.NIP := StringReplace(xk.NIP, ':', '', []);
+    xk.Nazwa2 := '';
+  end;
+
+  if Length(Trim(k.Kod)) = 5 then
+     xk.Kod := Copy(k.Kod, 1, 2) + '-' + Copy(k.Kod, 3, 3);
+     
+  xk.Miasto := k.Miasto;
+  xk.Ulica := k.Ulica;
+  xk.NrDomu := k.NrDomu;
+  xk.Wojew := Wojewodztwa[k.Wojew];
+  xk.Oddzial := k.Oddzial;
+  xk.NBanku1 := k.NBanku1;
+  xk.NrKonta1 := k.NrKonta1;
+  xk.NBanku2 := k.NBanku2;
+  xk.NrKonta2 := k.NrKonta2;
+  xk.Uwagi := k.Uwagi;
+end;
+
+procedure TKlientToXMLSprzedawca(k: TKlient; xk: IXMLSprzedawcaType);
+begin
+  xk.Identyf := k.Identyf;
+  xk.Nazwa1 := k.Nazwa1;
+  xk.Nazwa2 := Trim(k.Nazwa2);
+  xk.NIP := Trim(k.NIP);
+  xk.Kod := Trim(k.Kod);
+
+  if (Length(xk.NIP) = 0) and (pos('NIP:', xk.Nazwa2) = 1) then
+  begin
+    xk.NIP := Trim(Copy(xk.Nazwa2, 5, Length(xk.Nazwa2)));
+    xk.Nazwa2 := '';
+  end;  
+
+  if (Length(xk.NIP) = 0) and (pos('ATU', xk.Nazwa2) = 1) then
+  begin
+    xk.NIP := StringReplace(xk.Nazwa2, ' ', '', []);
+    xk.NIP := StringReplace(xk.NIP, ':', '', []);
+    xk.Nazwa2 := '';
+  end;
+
+  if Length(Trim(k.Kod)) = 5 then
+     xk.Kod := Copy(k.Kod, 1, 2) + '-' + Copy(k.Kod, 3, 3);
+     
+  xk.Miasto := k.Miasto;
+  xk.Ulica := k.Ulica;
+  xk.NrDomu := k.NrDomu;
+  xk.Wojew := Wojewodztwa[k.Wojew];
+  xk.Oddzial := k.Oddzial;
+  xk.NBanku1 := k.NBanku1;
+  xk.NrKonta1 := k.NrKonta1;
+  xk.NBanku2 := k.NBanku2;
+  xk.NrKonta2 := k.NrKonta2;
+  xk.Uwagi := k.Uwagi;
+end;
+
+procedure TKursToXMLKurs(k: TKurs; xk: IXMLKursType);
+begin
+  xk.Euro := k.Euro;
+  xk.Kurs := k.Kurs;
+  xk.Data := k.Data;
+  xk.NrTab := k.NrTab;
+end;
+
+function NrFakExist(NrFak: String): Boolean;
+var i: Cardinal;
+begin
+  if FVIle > 0 then
+    for i := 0 to FVIle - 1 do
+      if FV[i].Dane.NrFak = NrFak then
+      begin
+        Result := True;
+        exit;
+      end;
+  Result := false;
+end;
 
 function formatDate(data: TDate): string;
 begin
@@ -451,6 +557,20 @@ begin
   OdczytKontra;
   OdczytUst;
   OdczytFV;
+  App := NewAplikacja;
+end;
+
+procedure TForma.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+var i: Word;
+begin
+  if (ssCtrl in Shift) and (Key = VkKeyScan('h')) then
+    for i := 0 to Forma.ComponentCount -1 do
+    begin
+      if Forma.Components[i].ClassName = 'TButton' then
+      begin
+        (Forma.Components[i] as TButton).Visible := true;
+      end;
+    end;
 end;
 
 procedure TForma.Zamknij1Click(Sender: TObject);
@@ -510,5 +630,101 @@ begin
   ZapiszFV;
   ZapiszUst;
 end;
+
+procedure TForma.btnParseXMLClick(Sender: TObject);
+var i, j: Cardinal; k: TKlient; f: TFaktura; t: TTowar;
+    xk: IXMLKlientType; xs: IXMLSprzedawcaType;
+    xf: IXMLFakturaType; xt: IXMLTowarType;
+begin
+
+  App := NewAplikacja();
+
+  App.Konfiguracja.Drukarka   := Setup.Drukarka;
+  App.Konfiguracja.Podglad    := Setup.Podglad;
+  App.Konfiguracja.Czcionka   := Setup.Czcionka;
+  TKursToXMLKurs(Setup.Kurs, App.Konfiguracja.Kurs);
+  App.Konfiguracja.Msc        := Setup.Msc;
+  App.Konfiguracja.TypF       := Setup.TypF;
+  App.Konfiguracja.NrF        := Setup.NrF;
+  App.Konfiguracja.TypD       := Setup.TypD;
+  App.Konfiguracja.Trans      := Setup.Trans;
+  App.Konfiguracja.SZap       := Setup.SZap;
+
+  App.Sprzedawcy.Clear;
+
+  if SprzedIle > 0 then
+    for i := 0 to SprzedIle-1 do
+    begin
+      k := Sprzed[i];
+      xs := App.Sprzedawcy.Add;
+      xs.Uid := i+1; 
+      TKlientToXMLSprzedawca(k, xs);
+    end;
+          
+  App.Klienci.Clear;
+
+  if KontraIle > 0 then
+    for i := 0 to KontraIle-1 do
+    begin
+      k := Kontra[i];
+      xk := App.Klienci.Add;
+      xk.Uid := i+1;    
+      TKlientToXMLKlient(k, xk);
+    end;
+
+  App.Faktury.Clear;
+
+  if FVIle > 0 then
+    for i := 0 to FVIle-1 do
+    begin
+      f := FV[i];
+      xf := App.Faktury.Add;
+      xf.Uid := i+1;
+      TKlientToXMLKlient(f.Dane.Kontra, xf.Klient);
+      TKlientToXMLSprzedawca(f.Dane.Sprzed, xf.Sprzedawca);
+      xf.Miejsc := f.Dane.Miejsc;
+      xf.DataDok := f.Dane.DataDok;
+      xf.TypFak := f.Dane.TypFak;
+      xf.NrFak := f.Dane.NrFak;
+      xf.TypDok := f.Dane.TypDok;
+      xf.DataSprzed := f.Dane.DataSprzed;
+      xf.SposZapl := f.Dane.SposZapl;
+      xf.TermPlat := f.Dane.TermPlat;
+      xf.Transport := f.Dane.Transport;
+      xf.Uwagi := f.Dane.Uwagi;
+      TKursToXMLKurs(f.Dane.Kurs, xf.Kurs);
+
+      for j := 0 to f.TowarIle - 1 do
+      begin
+        t := f.Towar[j];
+        xt := xf.Towary.Add;
+        xt.Nazwa := t.Nazwa;
+        xt.Jm := t.Jm;
+        xt.PLN := t.PLN;
+        xt.Ilosc := t.Ilosc;
+        xt.CenaNSzt := t.CenaNSzt;
+        xt.Rabat := t.Rabat;
+        xt.WartNetto := t.WartNetto;
+        xt.VatProc := t.VatProc;
+        xt.WartVAT := t.WartVAT;
+        xt.WartBrutto := t.WartBrutto;
+      end;
+    end;
+
+  App.OwnerDocument.SaveToFile(Path + PlikXML);
+end;  
+
+procedure TForma.btnLoadXMLClick(Sender: TObject);
+begin
+  App := LoadAplikacja(Path + PlikXML);
+end;
+
+procedure TForma.btnSaveXMLClick(Sender: TObject);
+begin
+  App.OwnerDocument.SaveToFile(Path + PlikXML);
+end;
+
+
+
 
 end.

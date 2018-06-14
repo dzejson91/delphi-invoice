@@ -19,12 +19,13 @@ type
     Button3: TButton;
     Label3: TLabel;
     SNFV: TMaskEdit;
-    btnGenerateJPK: TButton;
+    btnDelete: TButton;
     procedure FormCreate(Sender: TObject);
     procedure SDataCloseUp(Sender: TObject);
     procedure ListaChange(Sender: TObject; Item: TListItem;
       Change: TItemChange);
     procedure Button3Click(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -79,7 +80,23 @@ procedure TArchiw.ListaChange(Sender: TObject; Item: TListItem;
 begin
   Button2.Enabled:=Lista.SelCount > 0;
   Button3.Enabled:=Lista.SelCount > 0;
-  btnGenerateJPK.Enabled:=Lista.SelCount > 0;
+  btnDelete.Enabled:=Lista.SelCount > 0;
+end;
+
+procedure TArchiw.btnDeleteClick(Sender: TObject);
+var id: Cardinal;
+begin
+  if Lista.SelCount = 0 then Exit;
+  id:=StrToInt(Lista.Selected.Caption);
+  if MessageBox(0, 'Czy na pewno usun¹æ fakturê z historii?', PChar(Application.Title), MB_ICONWARNING+MB_YESNO) <> 6 then Exit;
+  while id < FVIle-1 do
+  begin
+    FV[id]:=FV[id+1];
+    Inc(id);
+  end;
+  Dec(FVIle);
+  SetLength(FV, FVIle);
+  Szukaj;
 end;
 
 procedure TArchiw.Button3Click(Sender: TObject);

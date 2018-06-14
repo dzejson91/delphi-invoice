@@ -29,6 +29,7 @@
     <DelphiCompile Include="Project1.dpr">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
+    <DCCReference Include="app_schema.pas" />
     <DCCReference Include="Archiwum.pas">
       <Form>Archiw</Form>
     </DCCReference>

@@ -53,10 +53,6 @@ object Wystaw: TWystaw
         object TabSheet4: TTabSheet
           Caption = 'Opis'
           ImageIndex = 2
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             703
             140)
@@ -131,7 +127,7 @@ object Wystaw: TWystaw
             Width = 129
             Height = 24
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 16
             ItemIndex = 0
             MaxLength = 20
             TabOrder = 3
@@ -257,10 +253,6 @@ object Wystaw: TWystaw
     object TabSheet3: TTabSheet
       Caption = 'P'#322'atno'#347'ci i transport'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label6: TLabel
         Left = 336
         Top = 40
@@ -312,7 +304,7 @@ object Wystaw: TWystaw
         Top = 60
         Width = 105
         Height = 24
-        ItemHeight = 0
+        ItemHeight = 16
         MaxLength = 30
         TabOrder = 1
         Text = 'Got'#243'wka'
@@ -327,7 +319,7 @@ object Wystaw: TWystaw
         Top = 60
         Width = 105
         Height = 24
-        ItemHeight = 0
+        ItemHeight = 16
         MaxLength = 64
         TabOrder = 2
         Items.Strings = (
@@ -352,10 +344,6 @@ object Wystaw: TWystaw
     object TabSheet5: TTabSheet
       Caption = 'Uwagi do dokumentu'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Uwagi: TMemo
         Left = 0
         Top = 0

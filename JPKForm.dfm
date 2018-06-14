@@ -38,7 +38,7 @@ object JPKForma: TJPKForma
     Top = 27
     Width = 283
     Height = 182
-    Date = 43262.861338020830000000
+    Date = 43262.857481643520000000
     TabOrder = 0
   end
   object Button1: TButton
@@ -55,7 +55,7 @@ object JPKForma: TJPKForma
     Top = 27
     Width = 283
     Height = 182
-    Date = 43262.861869560180000000
+    Date = 43262.857481655090000000
     TabOrder = 2
   end
   object Memo1: TMemo
@@ -127,7 +127,7 @@ object JPKForma: TJPKForma
       Top = 16
       Width = 168
       Height = 21
-      ItemHeight = 13
+      ItemHeight = 0
       TabOrder = 3
     end
   end

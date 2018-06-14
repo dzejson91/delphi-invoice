@@ -153,15 +153,15 @@ object Archiw: TArchiw
     TabOrder = 3
     OnClick = Button3Click
   end
-  object btnGenerateJPK: TButton
+  object btnDelete: TButton
     Tag = 1
     Left = 0
     Top = 353
-    Width = 105
+    Width = 65
     Height = 25
     Anchors = [akLeft, akBottom]
-    Caption = 'Generuj JPK'
+    Caption = 'Usu'#324
     TabOrder = 4
-    OnClick = Button3Click
+    OnClick = btnDeleteClick
   end
 end

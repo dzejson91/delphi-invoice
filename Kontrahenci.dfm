@@ -161,7 +161,6 @@ object Kontrahent: TKontrahent
         Top = 68
         Width = 57
         Height = 21
-        EditMask = '99-999;0;_'
         MaxLength = 6
         TabOrder = 4
         OnExit = IdentExit
@@ -207,7 +206,6 @@ object Kontrahent: TKontrahent
         Top = 34
         Width = 118
         Height = 21
-        EditMask = '>cc 9999999999;0;_'
         MaxLength = 13
         TabOrder = 1
         Text = 'PL'
@@ -264,6 +262,10 @@ object Kontrahent: TKontrahent
     object TabSheet2: TTabSheet
       Caption = 'Bank'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 104
         Top = 24
@@ -301,6 +303,10 @@ object Kontrahent: TKontrahent
     object TabSheet3: TTabSheet
       Caption = 'Uwagi'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Uwagi: TMemo
         Left = 0
         Top = 0
