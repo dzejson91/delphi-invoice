@@ -2,7 +2,7 @@ unit Functions;
 
 interface
 
-uses SysUtils, Dialogs, Math, Unit1;
+uses SysUtils, Dialogs, Math, Glowny, app_schema;
 
 type
 
@@ -18,7 +18,7 @@ function JPKPriceFormat(Value: Extended): string;
 function DateToStr(date: TDateTime): string;
 function TimeToStr(time: TDateTime): string;
 function DateTimeToStr(datetime: TDateTime; join: string = 'T'): string;
-function sumaTowarow(towary: array of TTowar): TSuma;
+function sumaTowarow(towary: IXMLTowaryType): TSuma;
 
 implementation
 
@@ -52,18 +52,18 @@ begin
   Result := DateToStr(datetime) + join + TimeToStr(datetime);
 end;
 
-function sumaTowarow(towary: array of TTowar): TSuma;
+function sumaTowarow(towary: IXMLTowaryType): TSuma;
 var i: Word;
 begin
   Result.Netto := 0;
   Result.VAT := 0;
   Result.Brutto := 0;
-  if Length(towary) > 0 then
-    for i := 0 to Length(towary) - 1 do
+  if towary.Count > 0 then
+    for i := 0 to towary.Count - 1 do
     begin
-      Result.Netto := Result.Netto + towary[i].WartNetto;
-      Result.VAT := Result.VAT + towary[i].WartVAT;
-      Result.Brutto := Result.Brutto + towary[i].WartBrutto;
+      Result.Netto := Result.Netto + towary.Towar[i].WartNetto;
+      Result.VAT := Result.VAT + towary.Towar[i].WartVAT;
+      Result.Brutto := Result.Brutto + towary.Towar[i].WartBrutto;
     end;
 end;
 

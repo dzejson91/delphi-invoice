@@ -45,7 +45,7 @@ var
 
 implementation
 
-uses Unit1;
+uses Glowny;
 
 {$R *.dfm}
 
@@ -55,9 +55,9 @@ begin
   DDruk.Clear;
   DPodg.Items.Text:=Printer.Printers.Text;
   DDruk.Items.Text:=Printer.Printers.Text;
-  DPodg.ItemIndex:=Setup.Podglad;
-  DDruk.ItemIndex:=Setup.Drukarka;
-  Czc.Caption:=Setup.Czcionka;
+  DPodg.ItemIndex:=App.Konfiguracja.Podglad;
+  DDruk.ItemIndex:=App.Konfiguracja.Drukarka;
+  Czc.Caption:=App.Konfiguracja.Czcionka;
 end;
 
 procedure TUstaw.EuroExit(Sender: TObject);
@@ -70,37 +70,38 @@ begin
   end else
   begin
     Euro.Text:=FormatFloat('0.0000', V);
-    Setup.Kurs.Kurs:=V;
+    App.Konfiguracja.Kurs.Kurs := V;
   end;
 end;
 
 procedure TUstaw.TabSheet2Show(Sender: TObject);
 begin
-    DEuro.Date:=Setup.Kurs.Data;
-    Euro.Text:=FormatFloat('0.0000', Setup.Kurs.Kurs);
+    DEuro.Date := App.Konfiguracja.Kurs.Data;
+    NrTab.Text := App.Konfiguracja.Kurs.NrTab;
+    Euro.Text := FormatFloat('0.0000', App.Konfiguracja.Kurs.Kurs);
 end;
 
 procedure TUstaw.DEuroChange(Sender: TObject);
 begin
-  Setup.Kurs.Data:=DEuro.Date;
+  App.Konfiguracja.Kurs.Data := DEuro.Date;
 end;
 
 procedure TUstaw.DPodgChange(Sender: TObject);
 begin
-  Setup.Drukarka:=DDruk.ItemIndex;
-  Setup.Podglad:=DPodg.ItemIndex;
+  App.Konfiguracja.Drukarka := DDruk.ItemIndex;
+  App.Konfiguracja.Podglad := DPodg.ItemIndex;
 end;
 
 procedure TUstaw.NrTabChange(Sender: TObject);
 begin
-  Setup.Kurs.NrTab:=NrTab.Text;
+  App.Konfiguracja.Kurs.NrTab := NrTab.Text;
 end;
 
 procedure TUstaw.SpeedButton1Click(Sender: TObject);
 begin
   if (Sender <> nil) and (Font.Execute) then
-    Setup.Czcionka:=Font.Font.Name;
-  Czc.Caption:=Setup.Czcionka;
+    App.Konfiguracja.Czcionka := Font.Font.Name;
+  Czc.Caption := App.Konfiguracja.Czcionka;
 end;
 
 end.

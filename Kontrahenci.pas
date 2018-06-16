@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Mask, ComCtrls;
+  Dialogs, StdCtrls, Mask, ComCtrls, app_schema;
 
 type
   TKontrahent = class(TForm)
@@ -63,7 +63,9 @@ var
   Kontrahent: TKontrahent;
 
 implementation
-uses Unit1;
+
+uses Glowny;
+
 {$R *.dfm}
 
 function Sprawdz: Boolean;
@@ -81,21 +83,24 @@ begin
 end;
 
 procedure OdswiezListe;
-var i: Word; L: TListItem; s: String;
+var i: Word; L: TListItem; s: String; k: IXMLKlientType;
 begin
   Kontrahent.Lista.Clear;
-  if KontraIle > 0 then
-    for i:=0 to KontraIle-1 do
+  if App.Klienci.Count > 0 then
+    for i:=0 to App.Klienci.Count-1 do
     begin
-      s:= Kontra[i].Nazwa1+' '+Kontra[i].NIP+' '+Kontra[i].Kod+' '+Kontra[i].Miasto+', '+Kontra[i].Ulica;
+      k := App.Klienci.Klient[i];
+//      if k.Deleted then continue;
+      
+      s:= k.Nazwa1+' '+k.NIP+' '+k.Kod+' '+k.Miasto+', '+k.Ulica;
       if(Length(Kontrahent.Search.Text) > 0) and (Pos(LowerCase(Kontrahent.Search.Text), LowerCase(s)) <= 0) then
           Continue;
 
       L:=Kontrahent.Lista.Items.Add;
-      L.Caption:=Kontra[i].Identyf;
-      L.SubItems.Add(Kontra[i].Nazwa1);
-      L.SubItems.Add(Kontra[i].NIP);
-      L.SubItems.Add(Kontra[i].Kod+' '+Kontra[i].Miasto+', '+Kontra[i].Ulica);
+      L.Caption:=k.Identyf;
+      L.SubItems.Add(k.Nazwa1);
+      L.SubItems.Add(k.NIP);
+      L.SubItems.Add(k.Kod+' '+k.Miasto+', '+k.Ulica);
       L.SubItems.Add(IntToStr(i));
     end;
   Kontrahent.Button2.Enabled:=Sprawdz;
@@ -119,37 +124,19 @@ begin
 end;
 
 procedure TKontrahent.Button1Click(Sender: TObject);
-var i, id: Word; move: Boolean;
+var index: Integer;
 begin
-  move := false;
   if Lista.SelCount = 0 then Exit;
   if MessageBox(0, 'Czy na pewno usun¹æ dane kontrahenta?', PChar(Application.Title), MB_ICONQUESTION+MB_YESNO) <> 6 then Exit;
-  
-  if(KontraIle > 1) then
-  begin
-    id := StrToInt(Lista.Selected.SubItems.Strings[3]);
-    for i := 0 to KontraIle - 2 do
-    begin
-      if (not move) and (i = id) then
-      begin
-        move := true;
-      end;
-
-      if move then
-      begin
-        Kontra[i]:=Kontra[i+1];
-      end;
-    end;
-  end;
-
-  Dec(KontraIle);
-  SetLength(Kontra, KontraIle);
+  index := StrToInt(Lista.Selected.SubItems.Strings[3]);
+//  App.Klienci.Klient[index].Deleted := True;
+  App.Klienci.Delete(index);
   OdswiezListe;
 end;
 
 procedure TKontrahent.ListaChange(Sender: TObject; Item: TListItem;
   Change: TItemChange);
-var i: Word;
+var k: IXMLKlientType;
 begin
   Button1.Enabled := Lista.SelCount > 0;
   if Lista.SelCount > 0 then
@@ -159,20 +146,20 @@ begin
   //Button2.Enabled:=Sprawdz;
   if Lista.SelCount > 0 then
   begin
-    i:=StrToInt(Lista.Selected.SubItems.Strings[3]);
-    Ident.Text:=Kontra[i].Identyf;
-    NIP.Text:=Kontra[i].NIP;
-    Nazwa1.Text:=Kontra[i].Nazwa1;
-    Nazwa2.Text:=Kontra[i].Nazwa2;
-    Kod.Text:=Kontra[i].Kod;
-    Miasto.Text:=Kontra[i].Miasto;
-    Ulica.Text:=Kontra[i].Ulica;
-    NrDomu.Text:=Kontra[i].NrDomu;
-    Wojew.ItemIndex:=Kontra[i].Wojew;
-    Oddzial.Text:=Kontra[i].Oddzial;
-    BNazwa.Text:=Kontra[i].NBanku1;
-    BNumer.Text:=Kontra[i].NrKonta1;
-    Uwagi.Text:=Kontra[i].Uwagi;
+    k := App.Klienci.Klient[StrToInt(Lista.Selected.SubItems.Strings[3])];
+    Ident.Text:=k.Identyf;
+    NIP.Text:=k.NIP;
+    Nazwa1.Text:=k.Nazwa1;
+    Nazwa2.Text:=k.Nazwa2;
+    Kod.Text:=k.Kod;
+    Miasto.Text:=k.Miasto;
+    Ulica.Text:=k.Ulica;
+    NrDomu.Text:=k.NrDomu;
+    Wojew.ItemIndex:=k.Wojew;
+    Oddzial.Text:=k.Oddzial;
+    BNazwa.Text:=k.NBanku1;
+    BNumer.Text:=k.NrKonta1;
+    Uwagi.Text:=k.Uwagi;
   end else
   begin
     Ident.Text:='';
@@ -192,24 +179,22 @@ begin
 end;
 
 procedure TKontrahent.Button2Click(Sender: TObject);
-var i: Word;
+var k: IXMLKlientType;
 begin
-  i:=KontraIle;
-  Inc(KontraIle);
-  SetLength(Kontra, KontraIle);
-  Kontra[i].Identyf := Ident.Text;
-  Kontra[i].NIP := NIP.Text;
-  Kontra[i].Nazwa1 := Nazwa1.Text;
-  Kontra[i].Nazwa2 := Nazwa2.Text;
-  Kontra[i].Kod := Kod.Text;
-  Kontra[i].Miasto := Miasto.Text;
-  Kontra[i].Ulica := Ulica.Text;
-  Kontra[i].NrDomu := NrDomu.Text;
-  Kontra[i].Wojew := Wojew.ItemIndex;
-  Kontra[i].Oddzial := Oddzial.Text;
-  Kontra[i].NBanku1 := BNazwa.Text;
-  Kontra[i].NrKonta1 := BNumer.Text;
-  Kontra[i].Uwagi := Uwagi.Text;
+  k := App.Klienci.Add;
+  k.Identyf := Ident.Text;
+  k.NIP := NIP.Text;
+  k.Nazwa1 := Nazwa1.Text;
+  k.Nazwa2 := Nazwa2.Text;
+  k.Kod := Kod.Text;
+  k.Miasto := Miasto.Text;
+  k.Ulica := Ulica.Text;
+  k.NrDomu := NrDomu.Text;
+  k.Wojew := Wojew.ItemIndex;
+  k.Oddzial := Oddzial.Text;
+  k.NBanku1 := BNazwa.Text;
+  k.NrKonta1 := BNumer.Text;
+  k.Uwagi := Uwagi.Text;
   OdswiezListe;
 end;
 
@@ -220,12 +205,11 @@ begin
 end;
 
 procedure TKontrahent.IdentExit(Sender: TObject);
-var K: TKlient; id: Word;
+var k: IXMLKlientType;
 begin
   if Lista.SelCount > 0 then
   begin
-    id:=StrToInt(Lista.Selected.SubItems.Strings[3]);
-    K:=Kontra[id];
+    k := App.Klienci.Klient[StrToInt(Lista.Selected.SubItems.Strings[3])];
     K.Identyf := Ident.Text;
     K.NIP := NIP.Text;
     K.Nazwa1 := Nazwa1.Text;
@@ -239,7 +223,6 @@ begin
     K.NBanku1 := BNazwa.Text;
     K.NrKonta1 := BNumer.Text;
     K.Uwagi := Uwagi.Text;
-    Kontra[id] := K;
   end;
   Button2.Enabled:=Sprawdz;
 end;

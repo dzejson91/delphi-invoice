@@ -33,6 +33,10 @@ object Ustaw: TUstaw
       Font.Style = []
       ParentFont = False
       OnShow = TabSheet1Show
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         313
         192)
@@ -104,7 +108,7 @@ object Ustaw: TUstaw
         Height = 24
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ItemHeight = 16
+        ItemHeight = 0
         TabOrder = 0
         OnChange = DPodgChange
       end
@@ -115,7 +119,7 @@ object Ustaw: TUstaw
         Height = 24
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ItemHeight = 16
+        ItemHeight = 0
         TabOrder = 1
         OnChange = DPodgChange
       end

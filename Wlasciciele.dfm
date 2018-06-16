@@ -76,6 +76,10 @@ object Wlasciciel: TWlasciciel
     OnExit = PagesExit
     object TabSheet1: TTabSheet
       Caption = 'Dane podstawowe'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 8
         Top = 8
@@ -251,6 +255,10 @@ object Wlasciciel: TWlasciciel
     object TabSheet2: TTabSheet
       Caption = 'Bank'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 96
         Top = 8
@@ -321,6 +329,10 @@ object Wlasciciel: TWlasciciel
     object TabSheet3: TTabSheet
       Caption = 'Uwagi'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Uwagi: TMemo
         Left = 0
         Top = 0

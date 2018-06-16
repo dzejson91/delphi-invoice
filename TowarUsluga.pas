@@ -60,7 +60,7 @@ var
   nie_zmieniaj : boolean;
 implementation
 
-uses Ustawienia, Unit1;
+uses Ustawienia, Glowny;
 
 {$R *.dfm}
 
@@ -125,7 +125,7 @@ end;
 
 procedure TTowar.WalutaChange(Sender: TObject);
 begin
-  Eur.Caption:='1 EURO = '+FormatFloat('0.00000', Setup.Kurs.Kurs);
+  Eur.Caption:='1 EURO = '+FormatFloat('0.00000', App.Konfiguracja.Kurs.Kurs);
   case (Sender as TComboBox).ItemIndex of
     0:
     begin
@@ -162,7 +162,7 @@ begin
   if Nazwa.Items.Count = 0 then
     if FileExists(Path+PlikNT) then
       Nazwa.Items.LoadFromFile(Path+PlikNT);
-  Eur.Caption:='1 EURO = '+FormatFloat('0.00000', Setup.Kurs.Kurs);
+  Eur.Caption:='1 EURO = '+FormatFloat('0.00000', App.Konfiguracja.Kurs.Kurs);
 end;
 
 end.

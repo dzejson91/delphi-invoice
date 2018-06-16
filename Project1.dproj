@@ -1,4 +1,5 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{52b513fc-8cb8-49d1-9e0e-fa6f9a374a9c}</ProjectGuid>
     <MainSource>Project1.dpr</MainSource>
@@ -37,6 +38,9 @@
       <Form>Drukuj</Form>
     </DCCReference>
     <DCCReference Include="Functions.pas" />
+    <DCCReference Include="Glowny.pas">
+      <Form>Forma</Form>
+    </DCCReference>
     <DCCReference Include="JPKForm.pas">
       <Form>JPKForma</Form>
     </DCCReference>
@@ -48,9 +52,6 @@
       <Form>Towar</Form>
     </DCCReference>
     <DCCReference Include="uLkJSON.pas" />
-    <DCCReference Include="Unit1.pas">
-      <Form>Forma</Form>
-    </DCCReference>
     <DCCReference Include="Ustawienia.pas">
       <Form>Ustaw</Form>
     </DCCReference>

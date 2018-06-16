@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Mask, ComCtrls, Buttons, Spin, StrUtils;
+  Dialogs, StdCtrls, Mask, ComCtrls, Buttons, Spin, StrUtils, app_schema;
 
 type
   TWystaw = class(TForm)
@@ -40,10 +40,10 @@ type
     TabSheet5: TTabSheet;
     Uwagi: TMemo;
     Lista: TListView;
-    Usun: TButton;
-    Button1: TButton;
-    Button2: TButton;
-    Button3: TButton;
+    btnDelete: TButton;
+    btnAdd: TButton;
+    btnPrint: TButton;
+    btnPreview: TButton;
     SpeedButton1: TSpeedButton;
     Label1: TLabel;
     IleDni: TSpinEdit;
@@ -52,10 +52,10 @@ type
     PrintLogo: TCheckBox;
     procedure ClosClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure UsunClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure btnAddClick(Sender: TObject);
     procedure LKonChange(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
+    procedure btnPrintClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ListaChange(Sender: TObject; Item: TListItem;
@@ -74,37 +74,43 @@ var
   Wystaw: TWystaw;
 
 implementation
-Uses Unit1, TowarUsluga, Drukowanie, Kontrahenci;
+
+uses Glowny, TowarUsluga, Drukowanie, Kontrahenci;
+
 {$R *.dfm}
 
-function GetInfo(i: Word; Spr: Boolean): String;
-var K: TKlient;
+function GetInfo(i: Cardinal; Spr: Boolean): String;
+var k: IXMLKlientType; s: IXMLSprzedawcaType;
 begin
   if Spr then
-    K:=Sprzed[i] else
-    K:=Kontra[i];
-  Result := K.NIP + ', '+K.Identyf+', '+K.Nazwa1+' '+K.Nazwa2+', '+K.Kod+' '+K.Miasto+' '+K.Ulica+' '+K.NrDomu;
+  begin
+    s := App.Sprzedawcy.Sprzedawca[i];
+    Result := s.NIP + ', '+s.Identyf+', '+s.Nazwa1+' '+s.Nazwa2+', '+s.Kod+' '+s.Miasto+' '+s.Ulica+' '+s.NrDomu;
+  end else
+  begin
+    k := App.Klienci.Klient[i];
+    Result := k.NIP + ', '+k.Identyf+', '+k.Nazwa1+' '+k.Nazwa2+', '+k.Kod+' '+k.Miasto+' '+k.Ulica+' '+k.NrDomu;
+  end;
 end;
 
-function GetSearchInfo(i: Word): String;
-var K: TKlient;
+function GetSearchKlientInfo(i: Cardinal): String;
+var k: IXMLKlientType;
 begin
-  K:=Kontra[i];
-  Result:=LowerCase(K.Identyf+' '+K.Nazwa1+' '+K.Nazwa2);
+  k := App.Klienci.Klient[i];
+  Result:=LowerCase(k.Identyf+' '+k.Nazwa1+' '+k.Nazwa2);
 end;
 
 function SzukajKontra(s: String): Integer;
-var i: Integer;
+var i: Cardinal;
 begin
   Result := -1;
-  with Wystaw do
-    if KontraIle > 0 then
-      for i:=0 to KontraIle-1 do
-        if(Pos(LowerCase(s), GetSearchInfo(i)) > 0) then
-        begin
-          result := i;
-          break;
-        end;
+  if App.Klienci.Count > 0 then
+    for i := 0 to App.Klienci.Count-1 do
+      if(Pos(LowerCase(s), GetSearchKlientInfo(i)) > 0) then
+      begin
+        result := i;
+        break;
+      end;
 end;
 
 procedure OdswiezListe;
@@ -113,11 +119,11 @@ begin
   with Wystaw do begin
     LSpr.Clear;
     LKon.Clear;
-    if SprzedIle > 0 then
-      for i:=0 to SprzedIle-1 do
+    if App.Sprzedawcy.Count > 0 then
+      for i:=0 to App.Sprzedawcy.Count-1 do
         LSpr.Items.Add(GetInfo(i, True));
-    if KontraIle > 0 then
-      for i:=0 to KontraIle-1 do
+    if App.Klienci.Count > 0 then
+      for i:=0 to App.Klienci.Count-1 do
         LKon.Items.Add(GetInfo(i, False));
   end;
 end;
@@ -136,23 +142,23 @@ begin
   DataSprzed.DateTime:=Now;
   DataZaplaty.DateTime:=Now;
   //DataZaplaty.MinDate:=DataSprzed.Date;
-  Msc.Text:=Setup.Msc;
-  Typ.Text:=Setup.TypF;
-  Nr.Text:=Setup.NrF;
-  Oryg.ItemIndex:=Setup.TypD;
-  Sposob.Text:=Setup.SZap;
-  Transport.Text:=Setup.Trans;
+  Msc.Text:=App.Konfiguracja.Msc;
+  Typ.Text:=App.Konfiguracja.TypF;
+  Nr.Text:=App.Konfiguracja.NrF;
+  Oryg.ItemIndex:=App.Konfiguracja.TypD;
+  Sposob.Text:=App.Konfiguracja.SZap;
+  Transport.Text:=App.Konfiguracja.Trans;
 end;
 
-procedure TWystaw.UsunClick(Sender: TObject);
+procedure TWystaw.btnDeleteClick(Sender: TObject);
 begin
   Lista.DeleteSelected;
 end;
 
-procedure TWystaw.Button1Click(Sender: TObject);
+procedure TWystaw.btnAddClick(Sender: TObject);
 var L: TListItem;
 begin
-    Towar.Waluta.Enabled:=Lista.Items.Count = 0;
+  Towar.Waluta.Enabled:=Lista.Items.Count = 0;
   if Towar.ShowModal = mrOk then
   begin
     L:=Lista.Items.Add;
@@ -176,61 +182,65 @@ end;
 procedure TWystaw.LKonChange(Sender: TObject);
 begin
   if LKon.ItemIndex <> -1 then
-    Uwagi.Text:=Kontra[LKon.ItemIndex].Uwagi;
+    Uwagi.Text:=App.Klienci.Klient[LKon.ItemIndex].Uwagi;
 end;
 
-procedure TWystaw.Button2Click(Sender: TObject);
-var F: TFaktura; i: Word;
+procedure TWystaw.btnPrintClick(Sender: TObject);
+var AppTmp: IXMLAplikacjaType; F: IXMLFakturaType; i: Word; t: IXMLTowarType;
 begin
   if Lista.Items.Count = 0 then Exit;
   if LSpr.ItemIndex < 0 then Exit;
   if LKon.ItemIndex < 0 then Exit;
-  F.Dane.Sprzed:=Sprzed[LSpr.ItemIndex];
-  F.Dane.Kontra:=Kontra[LKon.ItemIndex];
-  F.Dane.Miejsc:=Msc.Text;
-  F.Dane.DataDok:=DataDzis.Date;
-  F.Dane.TypFak:=Typ.Text;
-  F.Dane.TypDok:=Oryg.Text;
-  F.Dane.NrFak:=Nr.Text;
-  F.Dane.DataSprzed:=DataSprzed.Date;
-  F.Dane.SposZapl:=Sposob.Text;
-  F.Dane.TermPlat:=DataZaplaty.Date;
-  F.Dane.Transport:=Transport.Text;
-  F.Dane.Uwagi:=Uwagi.Text;
-  F.Dane.Kurs:=Setup.Kurs;
-  F.TowarIle:=Lista.Items.Count;
-  SetLength(F.Towar, F.TowarIle);
-  for i:=0 to F.TowarIle-1 do
-  begin
-    F.Towar[i].Nazwa:=Lista.Items[i].SubItems.Strings[0];
-    F.Towar[i].Jm:=Lista.Items[i].SubItems.Strings[1];
-    F.Towar[i].PLN:=Lista.Items[i].SubItems.Strings[2] = 'PLN';
-    F.Towar[i].Ilosc:=StrToFloat(Lista.Items[i].SubItems.Strings[3]);
-    F.Towar[i].CenaNSzt:=StrToFloat(Lista.Items[i].SubItems.Strings[4]);
-    F.Towar[i].Rabat:=StrToInt(Lista.Items[i].SubItems.Strings[5]);
-    F.Towar[i].WartNetto:=StrToFloat(Lista.Items[i].SubItems.Strings[6]);
-    F.Towar[i].VatProc:=StrToInt(Lista.Items[i].SubItems.Strings[7]);
-    F.Towar[i].WartVAT:=StrToFloat(Lista.Items[i].SubItems.Strings[8]);
-    F.Towar[i].WartBrutto:=StrToFloat(Lista.Items[i].SubItems.Strings[9]);
-    if i = 0 then F.Dane.Kurs.Euro:=not F.Towar[i].PLN;
-  end;
 
-  if NrFakExist(F.Dane.NrFak) then
+  if NrFakExist(Nr.Text) then
   begin
     if MessageBox(0, 'Numer faktury jest ju¿ u¿ywany! Jesteœ pewnien(a)?', PChar(Application.Title), MB_ICONQUESTION+MB_YESNO) <> 6 then
       Exit;
   end;
 
+  AppTmp := NewAplikacja;
+
+  F := AppTmp.Faktury.Add;
+  CopyXMLSprzedawca(App.Sprzedawcy.Sprzedawca[LSpr.ItemIndex], F.Sprzedawca);
+  CopyXMLKlient(App.Klienci.Klient[LKon.ItemIndex], F.Klient);
+  F.Miejsc:=Msc.Text;
+  F.DataDok:=DataDzis.Date;
+  F.TypFak:=Typ.Text;
+  F.TypDok:=Oryg.Text;
+  F.NrFak:=Nr.Text;
+  F.DataSprzed:=DataSprzed.Date;
+  F.SposZapl:=Sposob.Text;
+  F.TermPlat:=DataZaplaty.Date;
+  F.Transport:=Transport.Text;
+  F.Uwagi:=Uwagi.Text;
+  CopyXMLKurs(App.Konfiguracja.Kurs, F.Kurs);
+  
+  for i:=0 to Lista.Items.Count -1 do
+  begin
+    t := F.Towary.Add;
+    t.Nazwa:=Lista.Items[i].SubItems.Strings[0];
+    t.Jm:=Lista.Items[i].SubItems.Strings[1];
+    t.PLN:=Lista.Items[i].SubItems.Strings[2] = 'PLN';
+    t.Ilosc:=StrToFloat(Lista.Items[i].SubItems.Strings[3]);
+    t.CenaNSzt:=StrToFloat(Lista.Items[i].SubItems.Strings[4]);
+    t.Rabat:=StrToInt(Lista.Items[i].SubItems.Strings[5]);
+    t.WartNetto:=StrToFloat(Lista.Items[i].SubItems.Strings[6]);
+    t.VatProc:=StrToInt(Lista.Items[i].SubItems.Strings[7]);
+    t.WartVAT:=StrToFloat(Lista.Items[i].SubItems.Strings[8]);
+    t.WartBrutto:=StrToFloat(Lista.Items[i].SubItems.Strings[9]);
+    if i = 0 then F.Kurs.Euro:=not t.PLN;
+  end;
+
   if (Sender as TButton).Tag = 1 then
     Drukuj.Druk(F, True) else
-    if F.Dane.TypDok = Oryg.Items.Strings[0] then
+    if F.TypDok = Oryg.Items.Strings[0] then
     begin
-      Forma.AppendFV(F);
+      CopyXMLFaktura(F, App.Faktury.Add);
       Drukuj.Druk(F, False);
       Drukuj.Druk(F, False);
       end else
     begin
-      Forma.AppendFV(F);
+      CopyXMLFaktura(F, App.Faktury.Add);
       Drukuj.Druk(F, False);
     end;
 end;
@@ -238,39 +248,37 @@ end;
 procedure TWystaw.SpeedButton1Click(Sender: TObject);
 begin
   Kontrahent.ShowModal;
-  Forma.ZapisKontra;
   OdswiezListe;
 end;
 
 procedure TWystaw.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  Setup.Msc := Msc.Text;
-  Setup.TypF := Typ.Text;
-  Setup.NrF := Nr.Text;
-  Setup.Trans := Transport.Text;
-  Setup.TypD := Oryg.ItemIndex;
-  Setup.SZap := Sposob.Text;
+  App.Konfiguracja.Msc := Msc.Text;
+  App.Konfiguracja.TypF := Typ.Text;
+  App.Konfiguracja.NrF := Nr.Text;
+  App.Konfiguracja.Trans := Transport.Text;
+  App.Konfiguracja.TypD := Oryg.ItemIndex;
+  App.Konfiguracja.SZap := Sposob.Text;
 end;
 
 procedure TWystaw.ListaChange(Sender: TObject; Item: TListItem;
   Change: TItemChange);
 begin
-  Button2.Enabled:=(Lista.Items.Count > 0) and (LSpr.ItemIndex >= 0) and (LKon.ItemIndex >= 0) ;
-  Button3.Enabled:=Button2.Enabled;
+  btnPrint.Enabled:=(Lista.Items.Count > 0) and (LSpr.ItemIndex >= 0) and (LKon.ItemIndex >= 0) ;
+  btnPreview.Enabled:=btnPrint.Enabled;
 end;
 
 procedure TWystaw.LSprChange(Sender: TObject);
 begin
-  Button2.Enabled:=(Lista.Items.Count > 0) and (LSpr.ItemIndex >= 0) and (LKon.ItemIndex >= 0) ;
-  Button3.Enabled:=Button2.Enabled;
+  btnPrint.Enabled:=(Lista.Items.Count > 0) and (LSpr.ItemIndex >= 0) and (LKon.ItemIndex >= 0) ;
+  btnPreview.Enabled:=btnPrint.Enabled;
   if LKon.ItemIndex >= 0 then
-    Uwagi.Text:=Kontra[LKon.ItemIndex].Uwagi;
+    Uwagi.Text:=App.Klienci.Klient[LKon.ItemIndex].Uwagi;
 end;
 
 procedure TWystaw.KontrSearchChange(Sender: TObject);
 begin
   LKon.ItemIndex := SzukajKontra(KontrSearch.Text);
- // ShowMessage(IntToStr(SzukajKontra(KontrSearch.Text)));
   LSprChange(nil);
 end;
 

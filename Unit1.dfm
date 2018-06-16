@@ -2,8 +2,8 @@ object Forma: TForma
   Left = 322
   Top = 250
   Caption = 'Faktury VAT'
-  ClientHeight = 229
-  ClientWidth = 518
+  ClientHeight = 433
+  ClientWidth = 729
   Color = 16448250
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,135 +11,132 @@ object Forma: TForma
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   KeyPreview = True
-  Menu = MainMenu
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyUp = FormKeyUp
+  DesignSize = (
+    729
+    433)
   PixelsPerInch = 96
   TextHeight = 16
   object BtnCreateFV: TButton
     Left = 8
     Top = 8
     Width = 105
-    Height = 25
+    Height = 41
     Caption = 'Wystaw FV'
     TabOrder = 0
-    OnClick = Wystawfaktur1Click
+    OnClick = BtnCreateFVClick
   end
   object BtnContractor: TButton
     Left = 119
-    Top = 8
+    Top = 55
     Width = 106
-    Height = 25
+    Height = 41
     Caption = 'Kontrachenci'
     TabOrder = 1
-    OnClick = Listanabywcw1Click
+    OnClick = BtnContractorClick
   end
   object BtnArchive: TButton
-    Left = 230
+    Left = 231
     Top = 8
     Width = 105
-    Height = 25
+    Height = 42
     Caption = 'Archiwum'
     TabOrder = 2
-    OnClick = Archiwumfaktur1Click
+    OnClick = BtnArchiveClick
   end
-  object btnExportJson: TButton
-    Left = 119
-    Top = 39
-    Width = 105
-    Height = 25
-    Caption = 'Generuj JSON'
+  object advanced: TGroupBox
+    Left = 8
+    Top = 102
+    Width = 713
+    Height = 323
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Caption = 'Funkcje zaawansowane'
     TabOrder = 3
     Visible = False
-    OnClick = btnExportJsonClick
+    object btnParseXML: TButton
+      Left = 230
+      Top = 22
+      Width = 105
+      Height = 35
+      Caption = 'Struct to XML'
+      TabOrder = 0
+      OnClick = btnParseXMLClick
+    end
+    object btnSaveStruct: TButton
+      Left = 119
+      Top = 63
+      Width = 105
+      Height = 36
+      Caption = 'Struct - Zapis'
+      TabOrder = 1
+      OnClick = btnSaveStructClick
+    end
+    object btnReadStruct: TButton
+      Left = 8
+      Top = 63
+      Width = 105
+      Height = 36
+      Caption = 'Struct - Odczyt'
+      TabOrder = 2
+      OnClick = btnReadStructClick
+    end
+    object btnLoadXML: TButton
+      Left = 8
+      Top = 22
+      Width = 105
+      Height = 35
+      Caption = 'Load from XML'
+      TabOrder = 3
+      OnClick = btnLoadXMLClick
+    end
+    object btnSaveXML: TButton
+      Left = 119
+      Top = 22
+      Width = 105
+      Height = 35
+      Caption = 'Save to XML'
+      TabOrder = 4
+      OnClick = btnSaveXMLClick
+    end
   end
   object BtnJPK: TButton
-    Left = 8
-    Top = 39
+    Left = 231
+    Top = 56
     Width = 105
-    Height = 25
+    Height = 40
     Caption = 'Generuj JPK'
     TabOrder = 4
-    Visible = False
     OnClick = BtnJPKClick
   end
-  object btnParseXML: TButton
-    Left = 230
-    Top = 70
-    Width = 105
-    Height = 25
-    Caption = 'Parse to XML'
+  object btnSeller: TButton
+    Left = 7
+    Top = 55
+    Width = 106
+    Height = 41
+    Caption = 'Sprzedawcy'
     TabOrder = 5
-    Visible = False
-    OnClick = btnParseXMLClick
+    OnClick = btnSellerClick
   end
-  object btnLoadXML: TButton
-    Left = 8
-    Top = 70
-    Width = 105
-    Height = 25
-    Caption = 'Load from XML'
-    TabOrder = 6
-    Visible = False
-    OnClick = btnLoadXMLClick
-  end
-  object btnSaveXML: TButton
+  object brnConfig: TButton
     Left = 119
-    Top = 70
-    Width = 105
-    Height = 25
-    Caption = 'Save to XML'
-    TabOrder = 7
-    Visible = False
-    OnClick = btnSaveXMLClick
-  end
-  object MainMenu: TMainMenu
-    Left = 376
-    Top = 56
-    object Plik1: TMenuItem
-      Caption = 'Plik'
-      object Wystawfaktur1: TMenuItem
-        Caption = 'Wystaw faktur'#281
-        OnClick = Wystawfaktur1Click
-      end
-      object Zamknij1: TMenuItem
-        Caption = 'Zamknij'
-        OnClick = Zamknij1Click
-      end
-    end
-    object Listy1: TMenuItem
-      Caption = 'Dane'
-      object Listasprzedawcw1: TMenuItem
-        Caption = 'Dane w'#322'a'#347'cicieli firmy'
-        OnClick = Listasprzedawcw1Click
-      end
-      object Listanabywcw1: TMenuItem
-        Caption = 'Dane kontrahent'#243'w'
-        OnClick = Listanabywcw1Click
-      end
-      object Archiwumfaktur1: TMenuItem
-        Caption = 'Archiwum faktur'
-        OnClick = Archiwumfaktur1Click
-      end
-    end
-    object Opcje1: TMenuItem
-      Caption = 'Inne opcje'
-      object Ustawienia1: TMenuItem
-        Caption = 'Ustawienia'
-        OnClick = Ustawienia1Click
-      end
-    end
+    Top = 8
+    Width = 106
+    Height = 41
+    Caption = 'Ustawienia'
+    TabOrder = 6
+    OnClick = brnConfigClick
   end
   object SaveDialog: TSaveDialog
-    DefaultExt = 'json'
+    DefaultExt = 'xml'
     FileName = 'faktury'
-    Filter = 'text/json|*.json'
+    Filter = 'application/xml|*.xml'
     Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]
-    Title = 'Miejsce docelowe pliku JSON'
-    Left = 408
-    Top = 56
+    Title = 'Miejsce docelowe pliku'
+    Left = 520
+    Top = 40
   end
 end

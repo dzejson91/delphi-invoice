@@ -423,7 +423,7 @@ object Wystaw: TWystaw
     ViewStyle = vsReport
     OnChange = ListaChange
   end
-  object Usun: TButton
+  object btnDelete: TButton
     Left = 0
     Top = 427
     Width = 129
@@ -431,9 +431,9 @@ object Wystaw: TWystaw
     Anchors = [akLeft, akBottom]
     Caption = 'Usu'#324' zaznaczone'
     TabOrder = 2
-    OnClick = UsunClick
+    OnClick = btnDeleteClick
   end
-  object Button1: TButton
+  object btnAdd: TButton
     Left = 136
     Top = 427
     Width = 65
@@ -441,9 +441,9 @@ object Wystaw: TWystaw
     Anchors = [akLeft, akBottom]
     Caption = 'Dodaj'
     TabOrder = 3
-    OnClick = Button1Click
+    OnClick = btnAddClick
   end
-  object Button2: TButton
+  object btnPrint: TButton
     Tag = 2
     Left = 596
     Top = 427
@@ -453,9 +453,9 @@ object Wystaw: TWystaw
     Caption = 'Drukuj'
     Enabled = False
     TabOrder = 5
-    OnClick = Button2Click
+    OnClick = btnPrintClick
   end
-  object Button3: TButton
+  object btnPreview: TButton
     Tag = 1
     Left = 470
     Top = 427
@@ -465,7 +465,7 @@ object Wystaw: TWystaw
     Caption = 'Podgl'#261'd wydruku'
     Enabled = False
     TabOrder = 6
-    OnClick = Button2Click
+    OnClick = btnPrintClick
   end
   object PrintLogo: TCheckBox
     Left = 367

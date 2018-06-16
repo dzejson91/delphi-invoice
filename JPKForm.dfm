@@ -1,15 +1,20 @@
 object JPKForma: TJPKForma
   Left = 0
   Top = 0
+  AutoSize = True
   Caption = 'Generuj JPK'
-  ClientHeight = 507
-  ClientWidth = 593
+  ClientHeight = 297
+  ClientWidth = 588
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Padding.Left = 8
+  Padding.Top = 8
+  Padding.Right = 8
+  Padding.Bottom = 8
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -38,34 +43,32 @@ object JPKForma: TJPKForma
     Top = 27
     Width = 283
     Height = 182
-    Date = 43262.857481643520000000
+    Date = 43262.819311759260000000
     TabOrder = 0
   end
-  object Button1: TButton
+  object btnGenerate: TButton
     Left = 467
     Top = 219
     Width = 113
-    Height = 32
+    Height = 67
     Caption = 'Generuj JPK '
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 1
-    OnClick = Button1Click
+    WordWrap = True
+    OnClick = btnGenerateClick
   end
   object DateTo: TMonthCalendar
     Left = 297
     Top = 27
     Width = 283
     Height = 182
-    Date = 43262.857481655090000000
+    Date = 43313.819311770840000000
     TabOrder = 2
-  end
-  object Memo1: TMemo
-    Left = 8
-    Top = 295
-    Width = 577
-    Height = 204
-    Lines.Strings = (
-      'Memo1')
-    TabOrder = 3
   end
   object GroupBox1: TGroupBox
     Left = 8
@@ -73,7 +76,7 @@ object JPKForma: TJPKForma
     Width = 453
     Height = 74
     Caption = 'Konfiguracja'
-    TabOrder = 4
+    TabOrder = 3
     object Label3: TLabel
       Left = 16
       Top = 20
@@ -127,8 +130,16 @@ object JPKForma: TJPKForma
       Top = 16
       Width = 168
       Height = 21
-      ItemHeight = 0
+      ItemHeight = 13
       TabOrder = 3
     end
+  end
+  object SaveDialog: TSaveDialog
+    FileName = 'JPK.xml'
+    Filter = 'application/xml|*.xml'
+    Options = [ofHideReadOnly, ofPathMustExist, ofEnableSizing]
+    Title = 'Wybierz lokalizacj'#281' zapisu'
+    Left = 400
+    Top = 256
   end
 end

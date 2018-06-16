@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xdb="http://www.borland.com/schemas/delphi/10.0/XMLDataBinding">
+  <xs:element name="Aplikacja" type="AplikacjaType"/>
+  <xs:complexType name="AplikacjaType"><xs:annotation>
+      <xs:appinfo xdb:docElement="Aplikacja"/>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Klienci" type="KlienciType"/>
+      <xs:element name="Sprzedawcy" type="SprzedawcyType"/>
+      <xs:element name="Faktury" type="FakturyType"/>
+      <xs:element name="Konfiguracja" type="KonfiguracjaType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="KlienciType">
+    <xs:sequence>
+      <xs:element name="Klient" type="KlientType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="KlientType">
+    <xs:sequence>
+      <xs:element name="Uid" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="Integer"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Identyf" type="xs:string"/>
+      <xs:element name="Nazwa1" type="xs:string"/>
+      <xs:element name="Nazwa2" type="xs:string"/>
+      <xs:element name="NIP" type="xs:string"/>
+      <xs:element name="Kod" type="xs:string"/>
+      <xs:element name="Miasto" type="xs:string"/>
+      <xs:element name="Ulica" type="xs:string"/>
+      <xs:element name="NrDomu" type="xs:string"/>
+      <xs:element name="Wojew" type="xs:string"/>
+      <xs:element name="Oddzial" type="xs:string"/>
+      <xs:element name="NBanku1" type="xs:string"/>
+      <xs:element name="NrKonta1" type="xs:string"/>
+      <xs:element name="NBanku2" type="xs:string"/>
+      <xs:element name="NrKonta2" type="xs:string"/>
+      <xs:element name="Uwagi" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="KlientType2">
+    <xs:sequence/>
+  </xs:complexType>
+  <xs:complexType name="SprzedawcyType">
+    <xs:sequence>
+      <xs:element name="Sprzedawca" type="SprzedawcaType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SprzedawcaType">
+    <xs:sequence>
+      <xs:element name="Uid" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="Integer"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Identyf" type="xs:string"/>
+      <xs:element name="Nazwa1" type="xs:string"/>
+      <xs:element name="Nazwa2" type="xs:string"/>
+      <xs:element name="NIP" type="xs:string"/>
+      <xs:element name="Kod" type="xs:string"/>
+      <xs:element name="Miasto" type="xs:string"/>
+      <xs:element name="Ulica" type="xs:string"/>
+      <xs:element name="NrDomu" type="xs:string"/>
+      <xs:element name="Wojew" type="xs:string"/>
+      <xs:element name="Oddzial" type="xs:string"/>
+      <xs:element name="NBanku1" type="xs:string"/>
+      <xs:element name="NrKonta1" type="xs:string"/>
+      <xs:element name="NBanku2" type="xs:string"/>
+      <xs:element name="NrKonta2" type="xs:string"/>
+      <xs:element name="Uwagi" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SprzedawcaType2">
+    <xs:sequence/>
+  </xs:complexType>
+  <xs:complexType name="FakturyType">
+    <xs:sequence>
+      <xs:element name="Faktura" type="FakturaType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="FakturaType">
+    <xs:sequence>
+      <xs:element name="Klient" type="KlientType"/>
+      <xs:element name="Sprzedawca" type="SprzedawcaType"/>
+      <xs:element name="Miejsc" type="xs:string"/>
+      <xs:element name="DataDok" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="TDateTime"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TypFak" type="xs:string"/>
+      <xs:element name="NrFak" type="xs:string"/>
+      <xs:element name="TypDok" type="xs:string"/>
+      <xs:element name="DataSprzed" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="TDateTime"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SposZapl" type="xs:string"/>
+      <xs:element name="TermPlat" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="TDateTime"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Transport" type="xs:string"/>
+      <xs:element name="Uwagi" type="xs:string"/>
+      <xs:element name="Kurs" type="KursType"/>
+      <xs:element name="Towary" type="TowaryType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="KursType">
+    <xs:sequence>
+      <xs:element name="Euro" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="Boolean"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Kurs" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="double"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Data" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="TDateTime"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NrTab" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TowaryType">
+    <xs:sequence>
+      <xs:element name="Towar" type="TowarType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TowarType">
+    <xs:sequence>
+      <xs:element name="Nazwa" type="xs:string"/>
+      <xs:element name="Jm" type="xs:string"/>
+      <xs:element name="PLN" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="Boolean"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Ilosc" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="double"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CenaNSzt" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="double"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Rabat" type="xs:integer"><xs:annotation>
+          <xs:appinfo xdb:dataType="Byte"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="WartNetto" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="double"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="VatProc" type="xs:integer"><xs:annotation>
+          <xs:appinfo xdb:dataType="Byte"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="WartVAT" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="double"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="WartBrutto" type="xs:string"><xs:annotation>
+          <xs:appinfo xdb:dataType="double"/>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="FakturaType2">
+    <xs:sequence/>
+  </xs:complexType>
+  <xs:complexType name="KonfiguracjaType">
+    <xs:sequence>
+      <xs:element name="Drukarka" type="xs:integer"><xs:annotation>
+          <xs:appinfo xdb:dataType="byte"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Podglad" type="xs:integer"><xs:annotation>
+          <xs:appinfo xdb:dataType="byte"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Czcionka" type="xs:string"/>
+      <xs:element name="Kurs" type="KursType"/>
+      <xs:element name="Msc" type="xs:string"/>
+      <xs:element name="TypF" type="xs:string"/>
+      <xs:element name="NrF" type="xs:string"/>
+      <xs:element name="TypD" type="xs:integer"><xs:annotation>
+          <xs:appinfo xdb:dataType="byte"/>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Trans" type="xs:string"/>
+      <xs:element name="SZap" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Printers, IniFiles, Unit1, Wystawienie;
+  Dialogs, Printers, IniFiles, Glowny, Wystawienie, app_schema;
 
 const
   TH = 'Ij';
@@ -27,7 +27,7 @@ type
   private
     { Private declarations }
   public
-    procedure Druk(F: TFaktura; Podglad: Boolean);
+    procedure Druk(F: IXMLFakturaType; Podglad: Boolean);
     { Public declarations }
   end;
 
@@ -35,6 +35,8 @@ var
   Drukuj: TDrukuj;
   Tab1: array [1..10] of TTabelka;
 implementation
+
+uses TowarUsluga;
 
 {$R *.dfm}
 
@@ -157,10 +159,10 @@ begin
   Result := 5; //domyœlny procent PozY dla tekstów
   if not Wystawienie.Wystaw.PrintLogo.Checked then exit; //jeœli nie zaznaczono opcji drukowania logo
   
-  ini := TIniFile.Create(Unit1.Path + 'logo.ini');
+  ini := TIniFile.Create(Glowny.Path + 'logo.ini');
   ts := TStringList.Create;
   try
-    if not FileExists(Unit1.Path + 'logo.ini') then
+    if not FileExists(Glowny.Path + 'logo.ini') then
     begin
       ini.WriteInteger('Main', 'PozY', 5);
       exit;
@@ -170,11 +172,11 @@ begin
     for i:=0 to ts.Count-1 do
     begin
       s := ini.ReadString(ts.Strings[i], 'BMP', 'aaa');
-      if(FileExists(Unit1.Path + s)) then
+      if(FileExists(Glowny.Path + s)) then
       begin
         bmp := TBitMap.Create;
         try
-          bmp.LoadFromFile(Unit1.Path + s);
+          bmp.LoadFromFile(Glowny.Path + s);
           R.Left := C.ClipRect.Right * ini.ReadInteger(ts.Strings[i], 'Left', 25) div 100;
           R.Top := C.ClipRect.Bottom * ini.ReadInteger(ts.Strings[i], 'Top', 25) div 100;
           R.Right := C.ClipRect.Right * ini.ReadInteger(ts.Strings[i], 'Right', 75) div 100;
@@ -226,23 +228,23 @@ begin
   end;
 end;
 
-procedure TDrukuj.Druk(F: TFaktura; Podglad: Boolean);
+procedure TDrukuj.Druk(F: IXMLFakturaType; Podglad: Boolean);
 var MaxX, PozY, Marg, TxtY, TmpY, i, sw: Integer; D, kwe: Single;
-L: TStringList; val, Tmp: String;
+L: TStringList; val, Tmp: String; towar: IXMLTowarType;
 begin
-  if (F.TowarIle > 0) and (not F.Towar[0].PLN) then
+  if (F.Towary.Count > 0) and (not F.Towary.Towar[0].PLN) then
     val:='€' else
     val:='z³';
 
   if Podglad then
-    Printer.PrinterIndex:=Setup.Podglad else
-    Printer.PrinterIndex:=Setup.Drukarka;
+    Printer.PrinterIndex:=App.Konfiguracja.Podglad else
+    Printer.PrinterIndex:=App.Konfiguracja.Drukarka;
   Printer.BeginDoc;
   
  // MalujText(Printer.Canvas, Rect(0,0,100,50), 'jestem sobie przeczkolaczek', 3, Printer.Canvas.TextHeight('H'), true);
 
-  Printer.Canvas.Font.Name:=Setup.Czcionka;
-  Printer.Title:='Faktura VAT ('+F.Dane.TypFak+' '+F.Dane.NrFak+')';
+  Printer.Canvas.Font.Name:=App.Konfiguracja.Czcionka;
+  Printer.Title:='Faktura VAT ('+F.TypFak+' '+F.NrFak+')';
   PozY:=GetProc(Printer.PageHeight, MalujGrafike(Printer.Canvas));
   Marg:=GetProc(Printer.PageWidth, 5);
   MaxX:=GetProc(Printer.PageWidth, 90);
@@ -250,20 +252,20 @@ begin
   begin
     Font.Name:='Tahoma';
     sw:=TextWidth(' ');
-    Tmp:=F.Dane.Miejsc+', '+FormatDateTime('yyyy-mm-dd', F.Dane.DataDok);
+    Tmp:=F.Miejsc+', '+FormatDateTime('yyyy-mm-dd', F.DataDok);
     TextOut(MaxX+Marg-TextWidth(Tmp), PozY, Tmp);
 
     Font.Size:=24; Font.Style:=[fsBold];
     TextOut(Marg*2, PozY, 'Faktura VAT');
 
-    Tmp:=F.Dane.TypFak+' '+F.Dane.NrFak;
+    Tmp:=F.TypFak+' '+F.NrFak;
     Font.Size:=18; Font.Style:=[];
     TextOut((Printer.PageWidth-TextWidth(Tmp)) div 2, PozY + Marg, Tmp);
 
     PozY:=(PozY + Marg) + TextHeight(TH)*2;
     Font.Size:=10;
 
-    TextOut((Printer.PageWidth-TextWidth(F.Dane.TypDok)) div 2, PozY, F.Dane.TypDok);
+    TextOut((Printer.PageWidth-TextWidth(F.TypDok)) div 2, PozY, F.TypDok);
     //ShowMessage(F.Dane.TypDok);
 
     Font.Size:=8;
@@ -273,77 +275,75 @@ begin
 
     Tmp:='Nabywca: ';
     TextOut(Marg*3-TextWidth(Tmp), Pozy, Tmp);
-    Tmp:=F.Dane.Kontra.Nazwa1;
+    Tmp:=F.Klient.Nazwa1;
     TextOut(Marg*3, PozY, Tmp);
-    TextOut(Marg*3, PozY+TxtY, F.Dane.Kontra.Nazwa2);
+    TextOut(Marg*3, PozY+TxtY, F.Klient.Nazwa2);
 
     Tmp:='Sprzedawca: ';
     TextOut(MaxX div 2 + Marg*4-TextWidth(Tmp), PozY, Tmp);
-    Tmp:=F.Dane.Sprzed.Nazwa1;
+    Tmp:=F.Sprzedawca.Nazwa1;
     TextOut(MaxX div 2 + Marg*4, PozY, Tmp);
-    TextOut(MaxX div 2 + Marg*4, PozY+TxtY, F.Dane.Sprzed.Nazwa2);
+    TextOut(MaxX div 2 + Marg*4, PozY+TxtY, F.Sprzedawca.Nazwa2);
 
     PozY:=PozY+TxtY*2;
 
     Tmp:='Adres: ';
     TextOut(Marg*3-TextWidth(Tmp), Pozy, Tmp);
-    if Length(F.Dane.Kontra.Kod) > 0 then
+    if Length(F.Klient.Kod) > 0 then
     begin
-       Tmp:=F.Dane.Kontra.Kod+' '+F.Dane.Kontra.Miasto;
-       Insert('-', Tmp, 3);
+       Tmp:=F.Klient.Kod+' '+F.Klient.Miasto;
     end else
     begin
-       Tmp:=F.Dane.Kontra.Miasto;
+       Tmp:=F.Klient.Miasto;
     end;
     TextOut(Marg*3, PozY, Tmp);
-    TextOut(Marg*3, PozY+TxtY, F.Dane.Kontra.Ulica+' '+F.Dane.Kontra.NrDomu);
+    TextOut(Marg*3, PozY+TxtY, F.Klient.Ulica+' '+F.Klient.NrDomu);
 
     Tmp:='Adres: ';
     TextOut(MaxX div 2 + Marg*4-TextWidth(Tmp), PozY, Tmp);
-    if Length(F.Dane.Sprzed.Kod) > 0 then
+    if Length(F.Sprzedawca.Kod) > 0 then
     begin
-       Tmp:=F.Dane.Sprzed.Kod+' '+F.Dane.Sprzed.Miasto;
-       Insert('-', Tmp, 3);
+       Tmp:=F.Sprzedawca.Kod+' '+F.Sprzedawca.Miasto;
     end else
     begin
-       Tmp:=F.Dane.Sprzed.Miasto;
+       Tmp:=F.Sprzedawca.Miasto;
     end;
     TextOut(MaxX div 2 + Marg*4, PozY, Tmp);
-    TextOut(MaxX div 2 + Marg*4, PozY+TxtY, F.Dane.Sprzed.Ulica+' '+F.Dane.Sprzed.NrDomu);
+    TextOut(MaxX div 2 + Marg*4, PozY+TxtY, F.Sprzedawca.Ulica+' '+F.Sprzedawca.NrDomu);
 
     PozY:=PozY+TxtY*2;
 
     Tmp:='NIP: ';
     TextOut(Marg*3-TextWidth(Tmp), Pozy, Tmp);
-    Tmp:=F.Dane.Kontra.NIP;
+    Tmp:=F.Klient.NIP;
     TextOut(Marg*3, PozY, Tmp);
 
     Tmp:='NIP: ';
     TextOut(MaxX div 2 + Marg*4-TextWidth(Tmp), PozY, Tmp);
-    Tmp:=F.Dane.Sprzed.NIP;
+    Tmp:=F.Sprzedawca.NIP;
     TextOut(MaxX div 2 + Marg*4, PozY, Tmp);
 
     PozY:=PozY+TxtY;
 
     Tmp:='Bank: ';
     TextOut(MaxX div 2 + Marg*4-TextWidth(Tmp), PozY, Tmp);
-    Tmp:=F.Dane.Sprzed.NBanku1;
+    Tmp:=F.Sprzedawca.NBanku1;
     TextOut(MaxX div 2 + Marg*4, PozY, Tmp);
     Tmp:='Konto: ';
     TextOut(MaxX div 2 + Marg*4-TextWidth(Tmp), PozY+TxtY, Tmp);
-    Tmp:=F.Dane.Sprzed.NrKonta1;
+    Tmp:=F.Sprzedawca.NrKonta1;
     TextOut(MaxX div 2 + Marg*4, PozY+TxtY, Tmp);
 
-    if (F.Dane.Sprzed.NBanku2 <> '') and (F.Dane.Sprzed.NrKonta2 <> '') then
+    if (F.Sprzedawca.NBanku2 <> '') and (F.Sprzedawca.NrKonta2 <> '') then
     begin
       PozY:=PozY+(TxtY*2);
       Tmp:='Bank: ';
       TextOut(MaxX div 2 + Marg*4-TextWidth(Tmp), PozY, Tmp);
-      Tmp:=F.Dane.Sprzed.NBanku2;
+      Tmp:=F.Sprzedawca.NBanku2;
       TextOut(MaxX div 2 + Marg*4, PozY, Tmp);
       Tmp:='Konto: ';
       TextOut(MaxX div 2 + Marg*4-TextWidth(Tmp), PozY+TxtY, Tmp);
-      Tmp:=F.Dane.Sprzed.NrKonta2;
+      Tmp:=F.Sprzedawca.NrKonta2;
       TextOut(MaxX div 2 + Marg*4, PozY+TxtY, Tmp);
     end;
 
@@ -353,22 +353,22 @@ begin
 
     Tmp:='Data Sprzeda¿y: ';
     TextOut(Marg*3-TextWidth(Tmp), PozY, Tmp);
-    Tmp:=FormatDateTime('yyyy-mm-dd', F.Dane.DataSprzed);
+    Tmp:=FormatDateTime('yyyy-mm-dd', F.DataSprzed);
     TextOut(Marg*3, PozY, Tmp);
     Tmp:='Sposób zap³aty: ';
     TextOut(Marg*3-TextWidth(Tmp), PozY+TxtY, Tmp);
-    Tmp:=F.Dane.SposZapl+' ('+IntToStr(Round(F.Dane.TermPlat-F.Dane.DataDok))+' dni)';
+    Tmp:=F.SposZapl+' ('+IntToStr(Round(F.TermPlat-F.DataDok))+' dni)';
     TextOut(Marg*3, PozY+TxtY, Tmp);
     Tmp:='Termin zap³aty: ';
     TextOut(Marg*3-TextWidth(Tmp), PozY+TxtY*2, Tmp);
-    Tmp:=FormatDateTime('yyyy-mm-dd', F.Dane.TermPlat);
+    Tmp:=FormatDateTime('yyyy-mm-dd', F.TermPlat);
     TextOut(Marg*3, PozY+TxtY*2, Tmp);
 
     PozY:=PozY+TxtY*4;
 
-    if F.Dane.Transport <> '' then
+    if F.Transport <> '' then
     begin
-      Tmp:='Transport: '+F.Dane.Transport;
+      Tmp:='Transport: '+F.Transport;
       TextOut((Printer.PageWidth-TextWidth(Tmp)) div 2, PozY, Tmp);
       PozY:=PozY+TxtY*2;
     end;
@@ -383,40 +383,42 @@ begin
 
     PozY:=PozY+TxtY*2;
 
-    if F.TowarIle > 0 then
+    if F.Towary.Count > 0 then
     begin
-      for i:=0 to F.TowarIle-1 do
+      for i:=0 to F.Towary.Count -1 do
       begin
+        towar := F.Towary[i];
+        
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[1].X), PozY, Marg+GetProc(MaxX, CTab1[1].Y), PozY+Round(TextHeight(TH)*2.2)), IntToStr(i+1), 2, TextHeight(TH), False);
-        MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[2].X), PozY, Marg+GetProc(MaxX, CTab1[2].Y), PozY+Round(TextHeight(TH)*2.2)), F.Towar[i].Nazwa, 2, TextHeight(TH), True);
-        MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[3].X), PozY, Marg+GetProc(MaxX, CTab1[3].Y), PozY+Round(TextHeight(TH)*2.2)), F.Towar[i].Jm, 2, TextHeight(TH), False);
+        MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[2].X), PozY, Marg+GetProc(MaxX, CTab1[2].Y), PozY+Round(TextHeight(TH)*2.2)), towar.Nazwa, 2, TextHeight(TH), True);
+        MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[3].X), PozY, Marg+GetProc(MaxX, CTab1[3].Y), PozY+Round(TextHeight(TH)*2.2)), towar.Jm, 2, TextHeight(TH), False);
 
-        Tmp:=FormatFloat('0', F.Towar[i].Ilosc);
+        Tmp:=FormatFloat('0', towar.Ilosc);
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[4].X), PozY, Marg+GetProc(MaxX, CTab1[4].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 2, TextHeight(TH), False);
 
-        if F.Towar[i].PLN then
-          Tmp:=FormatFloat('0.00', F.Towar[i].CenaNSzt)+VPL else
-          Tmp:=FormatFloat('0.00', F.Towar[i].CenaNSzt * F.Dane.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', F.Towar[i].CenaNSzt)+VEU;
+        if towar.PLN then
+          Tmp:=FormatFloat('0.00', towar.CenaNSzt)+VPL else
+          Tmp:=FormatFloat('0.00', towar.CenaNSzt * F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', towar.CenaNSzt)+VEU;
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[5].X), PozY, Marg+GetProc(MaxX, CTab1[5].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
-        MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[6].X), PozY, Marg+GetProc(MaxX, CTab1[6].Y), PozY+Round(TextHeight(TH)*2.2)), IntToStr(F.Towar[i].Rabat)+' %', 2, TextHeight(TH), False);
+        MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[6].X), PozY, Marg+GetProc(MaxX, CTab1[6].Y), PozY+Round(TextHeight(TH)*2.2)), IntToStr(towar.Rabat)+' %', 2, TextHeight(TH), False);
 
-        if F.Towar[i].PLN then
-          Tmp:=FormatFloat('0.00', F.Towar[i].WartNetto)+VPL else
-          Tmp:=FormatFloat('0.00', F.Towar[i].WartNetto * F.Dane.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', F.Towar[i].WartNetto)+VEU;
+        if towar.PLN then
+          Tmp:=FormatFloat('0.00', towar.WartNetto)+VPL else
+          Tmp:=FormatFloat('0.00', towar.WartNetto * F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', towar.WartNetto)+VEU;
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[7].X), PozY, Marg+GetProc(MaxX, CTab1[7].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
-        Tmp:=FormatFloat('0', F.Towar[i].VatProc)+' %';
+        Tmp:=FormatFloat('0', towar.VatProc)+' %';
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[8].X), PozY, Marg+GetProc(MaxX, CTab1[8].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 2, TextHeight(TH), False);
 
-        if F.Towar[i].PLN then
-          Tmp:=FormatFloat('0.00', F.Towar[i].WartVAT)+VPL else
-          Tmp:=FormatFloat('0.00', F.Towar[i].WartVAT * F.Dane.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', F.Towar[i].WartVAT)+VEU;
+        if towar.PLN then
+          Tmp:=FormatFloat('0.00', towar.WartVAT)+VPL else
+          Tmp:=FormatFloat('0.00', towar.WartVAT * F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', towar.WartVAT)+VEU;
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[9].X), PozY, Marg+GetProc(MaxX, CTab1[9].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
-        if F.Towar[i].PLN then
-          Tmp:=FormatFloat('0.00', F.Towar[i].WartBrutto)+VPL else
-          Tmp:=FormatFloat('0.00', F.Towar[i].WartBrutto * F.Dane.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', F.Towar[i].WartBrutto)+VEU;
+        if towar.PLN then
+          Tmp:=FormatFloat('0.00', towar.WartBrutto)+VPL else
+          Tmp:=FormatFloat('0.00', towar.WartBrutto * F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', towar.WartBrutto)+VEU;
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[10].X), PozY, Marg+GetProc(MaxX, CTab1[10].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
         PozY:=PozY+Round(TextHeight(TH)*2.2);
@@ -449,42 +451,42 @@ begin
     MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, Tab2[1].X), PozY, Marg+GetProc(MaxX, Tab2[1].Y), PozY+Round(TextHeight(TH)*2.2)), ' Razem ', 1, TextHeight(TH), False);
 
     D:=0;
-    if F.TowarIle > 0 then
-      for i:=0 to F.TowarIle-1 do
-        D:=D+(F.Towar[i].WartNetto);
-    if (F.TowarIle > 0) and (not F.Towar[0].PLN) then
-      Tmp:=FormatFloat('0.00', D*F.Dane.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', D)+VEU else
+    if F.Towary.Count > 0 then
+      for i:=0 to F.Towary.Count -1 do
+        D:=D+(F.Towary.Towar[i].WartNetto);
+    if (F.Towary.Count > 0) and (not F.Towary.Towar[0].PLN) then
+      Tmp:=FormatFloat('0.00', D*F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', D)+VEU else
       Tmp:=FormatFloat('0.00', D)+VPL;
     MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, Tab2[2].X), PozY, Marg+GetProc(MaxX, Tab2[2].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
     D:=0;
-    if F.TowarIle > 0 then
-      for i:=0 to F.TowarIle-1 do
-        D:=D+(F.Towar[i].WartVAT);
-    if (F.TowarIle > 0) and (not F.Towar[0].PLN) then
-      Tmp:=FormatFloat('0.00', D*F.Dane.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', D)+VEU else
+    if F.Towary.Count > 0 then
+      for i:=0 to F.Towary.Count-1 do
+        D:=D+(F.Towary.Towar[i].WartVAT);
+    if (F.Towary.Count > 0) and (not F.Towary.Towar[0].PLN) then
+      Tmp:=FormatFloat('0.00', D*F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', D)+VEU else
       Tmp:=FormatFloat('0.00', D)+VPL;
     MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, Tab2[3].X), PozY, Marg+GetProc(MaxX, Tab2[3].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
    D:=0;
-    if F.TowarIle > 0 then
-      for i:=0 to F.TowarIle-1 do
-          D:=D+(F.Towar[i].Wartbrutto);
-    if (F.TowarIle > 0) and (not F.Towar[0].PLN) then
-      Tmp:=FormatFloat('0.00', D*F.Dane.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', D)+VEU else
+    if F.Towary.Count > 0 then
+      for i:=0 to F.Towary.Count -1 do
+          D:=D+(F.Towary.Towar[i].Wartbrutto);
+    if (F.Towary.Count > 0) and (not F.Towary.Towar[0].PLN) then
+      Tmp:=FormatFloat('0.00', D*F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', D)+VEU else
       Tmp:=FormatFloat('0.00', D)+VPL;
     MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, Tab2[4].X), PozY, Marg+GetProc(MaxX, Tab2[4].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
     PozY:=PozY+TextHeight(TH)*3;
 
-    if (F.TowarIle > 0) then
-      if not F.Towar[0].PLN then
+    if (F.Towary.Count > 0) then
+      if not F.Towary.Towar[0].PLN then
       begin
         kwe:=0;
-        if F.TowarIle > 0 then
-          for i:=0 to F.TowarIle-1 do
-            kwe:=kwe+(F.Towar[i].WartBrutto);
-        TextOut(Marg, PozY, 'Kurs Euro: '+FormatFloat('0.0000', F.Dane.Kurs.Kurs));
+        if F.Towary.Count > 0 then
+          for i:=0 to F.Towary.Count-1 do
+            kwe:=kwe+(F.Towary.Towar[i].WartBrutto);
+        TextOut(Marg, PozY, 'Kurs Euro: '+FormatFloat('0.0000', F.Kurs.Kurs));
         TextOut(Marg, PozY+TextHeight(TH), 'Do zap³aty: '+FormatFloat('0.00', kwe)+' '+val+' (Brutto)');
         TextOut(Marg, PozY+TextHeight(TH)*2, 'S³ownie: '+Slownie(kwe, 'euro', 'cent'));
         PozY:=PozY+TextHeight(TH)*4;
@@ -497,12 +499,12 @@ begin
 //        PozY:=PozY+TextHeight(TH)*3;
       end;
       
-    if (F.TowarIle > 0) and (F.Towar[0].PLN) then
+    if (F.Towary.Count > 0) and (F.Towary.Towar[0].PLN) then
     begin
       d:=0;
-      if F.TowarIle > 0 then
-        for i:=0 to F.TowarIle-1 do
-          d:=d+(F.Towar[i].Wartbrutto);
+      if F.Towary.Count > 0 then
+        for i:=0 to F.Towary.Count-1 do
+          d:=d+(F.Towary.Towar[i].Wartbrutto);
       TextOut(Marg, PozY, 'Do zap³aty: '+FormatFloat('0.00', D)+' z³');
       TextOut(Marg, PozY+TextHeight(TH), 'S³ownie: '+Slownie(D, 'z³', 'gr'));
     end;
@@ -525,13 +527,13 @@ begin
     Tmp:='do wystawienia faktury VAT';
     TextOut(Marg+(GetProc(MaxX, 77)+GetProc(MaxX, 100))div 2-TextWidth(Tmp) div 2, PozY+TxtY, Tmp);
 
-    if F.Dane.Kurs.Euro then
+    if F.Kurs.Euro then
     begin
       PozY:=PozY+TxtY*3;
 
-      Tmp:='Wartoœæ faktury obliczana na podstawie tabeli kursów œrednich NBP opublikowanych w dniu '+FormatDateTime('yyyy-mm-dd', F.Dane.Kurs.Data);
+      Tmp:='Wartoœæ faktury obliczana na podstawie tabeli kursów œrednich NBP opublikowanych w dniu '+FormatDateTime('yyyy-mm-dd', F.Kurs.Data);
       TextOut(Marg+(MaxX-TextWidth(Tmp)) div 2, PozY, Tmp);
-      Tmp:='tab. nr '+F.Dane.Kurs.NrTab+'                1 EUR = '+FormatFloat('0.0000', F.Dane.Kurs.Kurs);
+      Tmp:='tab. nr '+F.Kurs.NrTab+'                1 EUR = '+FormatFloat('0.0000', F.Kurs.Kurs);
       TextOut(Marg+(MaxX-TextWidth(Tmp)) div 2, PozY+TxtY, Tmp);
     end;
     
@@ -539,7 +541,7 @@ begin
 
     L:=TStringList.Create;
     try
-      L.Text:=F.Dane.Uwagi;
+      L.Text:=F.Uwagi;
       if L.Count > 0 then
         for i:=0 to L.Count-1 do
           TextOut(Marg, PozY+(i*TxtY), L.Strings[i]);

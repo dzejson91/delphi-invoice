@@ -3,7 +3,7 @@ object Archiw: TArchiw
   Top = 199
   BorderWidth = 8
   Caption = 'Archiwum'
-  ClientHeight = 385
+  ClientHeight = 417
   ClientWidth = 674
   Color = 16448250
   Font.Charset = DEFAULT_CHARSET
@@ -17,47 +17,43 @@ object Archiw: TArchiw
   OnCreate = FormCreate
   DesignSize = (
     674
-    385)
+    417)
   PixelsPerInch = 96
   TextHeight = 16
   object GroupBox1: TGroupBox
     Left = 0
     Top = 0
     Width = 674
-    Height = 57
+    Height = 74
     Align = alTop
     Caption = ' Wyszukiwarka faktur '
     TabOrder = 0
-    DesignSize = (
-      674
-      57)
     object Label1: TLabel
       Left = 108
-      Top = 28
+      Top = 33
       Width = 8
       Height = 16
       Caption = '--'
     end
     object Label2: TLabel
-      Left = 467
-      Top = 27
-      Width = 104
+      Left = 433
+      Top = 17
+      Width = 95
       Height = 16
-      Anchors = [akTop, akRight]
-      Caption = 'NIP kontrahenta:  '
-      ExplicitLeft = 382
+      AutoSize = False
+      Caption = 'NIP kontrahenta'
     end
     object Label3: TLabel
-      Left = 315
-      Top = 27
-      Width = 59
+      Left = 332
+      Top = 17
+      Width = 95
       Height = 16
-      Anchors = [akTop, akRight]
-      Caption = 'Nr faktury:'
+      AutoSize = False
+      Caption = 'Nr faktury'
     end
     object SData: TDateTimePicker
       Left = 8
-      Top = 24
+      Top = 29
       Width = 97
       Height = 24
       Date = 40759.387082245370000000
@@ -67,7 +63,7 @@ object Archiw: TArchiw
     end
     object EData: TDateTimePicker
       Left = 120
-      Top = 24
+      Top = 29
       Width = 97
       Height = 24
       Date = 40759.387082245370000000
@@ -76,33 +72,50 @@ object Archiw: TArchiw
       OnCloseUp = SDataCloseUp
     end
     object SNIP: TMaskEdit
-      Left = 577
-      Top = 24
-      Width = 81
+      Left = 433
+      Top = 39
+      Width = 95
       Height = 24
-      Anchors = [akTop, akRight]
       TabOrder = 3
       OnChange = SDataCloseUp
     end
     object SNFV: TMaskEdit
-      Left = 380
-      Top = 24
-      Width = 81
+      Left = 332
+      Top = 39
+      Width = 95
       Height = 24
-      Anchors = [akTop, akRight]
       TabOrder = 2
       OnChange = SDataCloseUp
+    end
+    object chbDeleted: TCheckBox
+      Left = 239
+      Top = 18
+      Width = 85
+      Height = 17
+      Caption = 'Usuni'#281'te'
+      TabOrder = 4
+      OnClick = chbDeletedClick
+    end
+    object chbDuplicate: TCheckBox
+      Left = 239
+      Top = 41
+      Width = 85
+      Height = 17
+      Caption = 'Duplikaty'
+      TabOrder = 5
+      OnClick = chbDeletedClick
     end
   end
   object Lista: TListView
     Left = 0
-    Top = 63
+    Top = 80
     Width = 673
-    Height = 284
+    Height = 299
     Anchors = [akLeft, akTop, akRight, akBottom]
     Columns = <
       item
         Caption = 'Id'
+        Width = 55
       end
       item
         Alignment = taCenter
@@ -111,12 +124,12 @@ object Archiw: TArchiw
       end
       item
         Caption = 'Nr FV'
-        Width = 60
+        Width = 70
       end
       item
         Alignment = taCenter
         Caption = 'NIP'
-        Width = 100
+        Width = 110
       end
       item
         Caption = 'Nazwa kontrahenta'
@@ -130,38 +143,42 @@ object Archiw: TArchiw
     TabOrder = 1
     ViewStyle = vsReport
     OnChange = ListaChange
+    ExplicitHeight = 307
   end
-  object Button2: TButton
+  object btnPrint: TButton
     Tag = 2
     Left = 616
-    Top = 353
+    Top = 385
     Width = 58
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Drukuj'
     TabOrder = 2
-    OnClick = Button3Click
+    OnClick = btnPreviewClick
+    ExplicitTop = 393
   end
-  object Button3: TButton
+  object btnPreview: TButton
     Tag = 1
     Left = 488
-    Top = 353
+    Top = 385
     Width = 122
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Podgl'#261'd wydruku'
     TabOrder = 3
-    OnClick = Button3Click
+    OnClick = btnPreviewClick
+    ExplicitTop = 393
   end
   object btnDelete: TButton
     Tag = 1
     Left = 0
-    Top = 353
+    Top = 385
     Width = 65
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Usu'#324
     TabOrder = 4
     OnClick = btnDeleteClick
+    ExplicitTop = 393
   end
 end

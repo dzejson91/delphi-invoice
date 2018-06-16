@@ -2,8 +2,7 @@ program Project1;
 
 uses
   Forms,
-  Unit1 in 'Unit1.pas' {Forma},
-  uLkJSON in 'uLkJSON.pas',
+  Glowny in 'Glowny.pas' {Forma},
   Wlasciciele in 'Wlasciciele.pas' {Wlasciciel},
   Kontrahenci in 'Kontrahenci.pas' {Kontrahent},
   Wystawienie in 'Wystawienie.pas' {Wystaw},

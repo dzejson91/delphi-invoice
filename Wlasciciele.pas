@@ -4,9 +4,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, StdCtrls, Mask, XPMan;
+  Dialogs, ComCtrls, StdCtrls, Mask, XPMan, app_schema;
 
-type               TWlasciciel = class(TForm)
+type
+  TWlasciciel = class(TForm)
     Lista: TListView;
     Pages: TPageControl;
     TabSheet1: TTabSheet;
@@ -63,7 +64,9 @@ var
   Wlasciciel: TWlasciciel;
 
 implementation
-uses Unit1;
+
+uses Glowny;
+
 {$R *.dfm}
 
 function Sprawdz: Boolean;
@@ -83,14 +86,15 @@ procedure OdswiezListe;
 var i: Word; L: TListItem;
 begin
   Wlasciciel.Lista.Clear;
-  if SprzedIle > 0 then
-    for i:=0 to SprzedIle-1 do
+  if App.Sprzedawcy.Count > 0 then
+    for i:=0 to App.Sprzedawcy.Count-1 do
     begin
+      //if App.Sprzedawcy.Sprzedawca[i].Deleted then continue;
       L:=Wlasciciel.Lista.Items.Add;
-      L.Caption:=Sprzed[i].Identyf;
-      L.SubItems.Add(Sprzed[i].Nazwa1);
-      L.SubItems.Add(Sprzed[i].NIP);
-      L.SubItems.Add(Sprzed[i].Kod+' '+Sprzed[i].Miasto+', '+Sprzed[i].Ulica);
+      L.Caption:=App.Sprzedawcy.Sprzedawca[i].Identyf;
+      L.SubItems.Add(App.Sprzedawcy.Sprzedawca[i].Nazwa1);
+      L.SubItems.Add(App.Sprzedawcy.Sprzedawca[i].NIP);
+      L.SubItems.Add(App.Sprzedawcy.Sprzedawca[i].Kod+' '+App.Sprzedawcy.Sprzedawca[i].Miasto+', '+App.Sprzedawcy.Sprzedawca[i].Ulica);
     end;
   Wlasciciel.Button2.Enabled:=Sprawdz;
   Application.ProcessMessages;
@@ -102,24 +106,17 @@ begin
 end;
 
 procedure TWlasciciel.Button1Click(Sender: TObject);
-var id: Word;
 begin
   if Lista.SelCount = 0 then Exit;
   if MessageBox(0, 'Czy na pewno usun¹æ dane w³aœciciela?', PChar(Application.Title), MB_ICONQUESTION+MB_YESNO) <> 6 then Exit;
-  id:=Lista.Selected.Index;
-  while id < SprzedIle-1 do
-  begin
-    Sprzed[id]:=Sprzed[id+1];
-    Inc(id);
-  end;
-  Dec(SprzedIle);
-  SetLength(Sprzed, SprzedIle);
+  //App.Sprzedawcy.Sprzedawca[Lista.Selected.Index].Deleted := true;
+  App.Sprzedawcy.Delete(Lista.Selected.Index);
   OdswiezListe;
 end;
 
 procedure TWlasciciel.ListaChange(Sender: TObject; Item: TListItem;
   Change: TItemChange);
-var i: Word;
+var s: IXMLSprzedawcaType;
 begin
   Button1.Enabled := Lista.SelCount > 0;
   if Lista.SelCount > 0 then
@@ -129,22 +126,22 @@ begin
   //Button2.Enabled:=Sprawdz;
   if Lista.SelCount > 0 then
   begin
-    i:=Lista.Selected.Index;
-    Ident.Text:=Sprzed[i].Identyf;
-    NIP.Text:=Sprzed[i].NIP;
-    Nazwa1.Text:=Sprzed[i].Nazwa1;
-    Nazwa2.Text:=Sprzed[i].Nazwa2;
-    Kod.Text:=Sprzed[i].Kod;
-    Miasto.Text:=Sprzed[i].Miasto;
-    Ulica.Text:=Sprzed[i].Ulica;
-    NrDomu.Text:=Sprzed[i].NrDomu;
-    Wojew.ItemIndex:=Sprzed[i].Wojew;
-    Oddzial.Text:=Sprzed[i].Oddzial;
-    BNazwa1.Text:=Sprzed[i].NBanku1;
-    BNumer1.Text:=Sprzed[i].NrKonta1;
-    BNazwa2.Text:=Sprzed[i].NBanku2;
-    BNumer2.Text:=Sprzed[i].NrKonta2;
-    Uwagi.Text:=Sprzed[i].Uwagi;
+    s := App.Sprzedawcy.Sprzedawca[Lista.Selected.Index];
+    Ident.Text:=s.Identyf;
+    NIP.Text:=s.NIP;
+    Nazwa1.Text:=s.Nazwa1;
+    Nazwa2.Text:=s.Nazwa2;
+    Kod.Text:=s.Kod;
+    Miasto.Text:=s.Miasto;
+    Ulica.Text:=s.Ulica;
+    NrDomu.Text:=s.NrDomu;
+    Wojew.ItemIndex:=s.Wojew;
+    Oddzial.Text:=s.Oddzial;
+    BNazwa1.Text:=s.NBanku1;
+    BNumer1.Text:=s.NrKonta1;
+    BNazwa2.Text:=s.NBanku2;
+    BNumer2.Text:=s.NrKonta2;
+    Uwagi.Text:=s.Uwagi;
   end else
   begin
     Ident.Text:='';
@@ -166,28 +163,26 @@ begin
 end;
 
 procedure TWlasciciel.Button2Click(Sender: TObject);
-var K: TKlient;
+var s: IXMLSprzedawcaType;
 begin
   Button2.Enabled:=Sprawdz;
   if not Button2.Enabled then Exit;
-  K.Identyf := Ident.Text;
-  K.NIP := NIP.Text;
-  K.Nazwa1 := Nazwa1.Text;
-  K.Nazwa2 := Nazwa2.Text;
-  K.Kod := Kod.Text;
-  K.Miasto := Miasto.Text;
-  K.Ulica := Ulica.Text;
-  K.NrDomu := NrDomu.Text;
-  K.Wojew := Wojew.ItemIndex;
-  K.Oddzial := Oddzial.Text;
-  K.NBanku1 := BNazwa1.Text;
-  K.NrKonta1 := BNumer1.Text;
-  K.NBanku2 := BNazwa2.Text;
-  K.NrKonta2 := BNumer2.Text;
-  K.Uwagi := Uwagi.Text;
-  Inc(SprzedIle);
-  SetLength(Sprzed, SprzedIle);
-  Sprzed[SprzedIle-1]:=K;
+  s := App.Sprzedawcy.Add;
+  s.Identyf := Ident.Text;
+  s.NIP := NIP.Text;
+  s.Nazwa1 := Nazwa1.Text;
+  s.Nazwa2 := Nazwa2.Text;
+  s.Kod := Kod.Text;
+  s.Miasto := Miasto.Text;
+  s.Ulica := Ulica.Text;
+  s.NrDomu := NrDomu.Text;
+  s.Wojew := Wojew.ItemIndex;
+  s.Oddzial := Oddzial.Text;
+  s.NBanku1 := BNazwa1.Text;
+  s.NrKonta1 := BNumer1.Text;
+  s.NBanku2 := BNazwa2.Text;
+  s.NrKonta2 := BNumer2.Text;
+  s.Uwagi := Uwagi.Text;
   OdswiezListe;
 end;
 
@@ -198,27 +193,26 @@ begin
 end;
 
 procedure TWlasciciel.IdentExit(Sender: TObject);
-var K: TKlient;
+var s: IXMLSprzedawcaType;
 begin
   if Lista.SelCount > 0 then
   begin
-    K:=Sprzed[Lista.Selected.Index];
-    K.Identyf := Ident.Text;
-    K.NIP := NIP.Text;
-    K.Nazwa1 := Nazwa1.Text;
-    K.Nazwa2 := Nazwa2.Text;
-    K.Kod := Kod.Text;
-    K.Miasto := Miasto.Text;
-    K.Ulica := Ulica.Text;
-    K.NrDomu := NrDomu.Text;
-    K.Wojew := Wojew.ItemIndex;
-    K.Oddzial := Oddzial.Text;
-    K.NBanku1 := BNazwa1.Text;
-    K.NrKonta1 := BNumer1.Text;
-    K.NBanku2 := BNazwa2.Text;
-    K.NrKonta2 := BNumer2.Text;
-    K.Uwagi := Uwagi.Text;
-    Sprzed[Lista.Selected.Index] := K;
+    s:=App.Sprzedawcy.Sprzedawca[Lista.Selected.Index];
+    s.Identyf := Ident.Text;
+    s.NIP := NIP.Text;
+    s.Nazwa1 := Nazwa1.Text;
+    s.Nazwa2 := Nazwa2.Text;
+    s.Kod := Kod.Text;
+    s.Miasto := Miasto.Text;
+    s.Ulica := Ulica.Text;
+    s.NrDomu := NrDomu.Text;
+    s.Wojew := Wojew.ItemIndex;
+    s.Oddzial := Oddzial.Text;
+    s.NBanku1 := BNazwa1.Text;
+    s.NrKonta1 := BNumer1.Text;
+    s.NBanku2 := BNazwa2.Text;
+    s.NrKonta2 := BNumer2.Text;
+    s.Uwagi := Uwagi.Text;
   end;
   Button2.Enabled:=Sprawdz;
 end;

@@ -4,16 +4,15 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ComCtrls, SchemaJPK, Functions, Unit1;
+  Dialogs, StdCtrls, ComCtrls, SchemaJPK, Functions, Glowny, app_schema;
 
 type
   TJPKForma = class(TForm)
     DateFrom: TMonthCalendar;
     Label1: TLabel;
     Label2: TLabel;
-    Button1: TButton;
+    btnGenerate: TButton;
     DateTo: TMonthCalendar;
-    Memo1: TMemo;
     GroupBox1: TGroupBox;
     EUR: TRadioButton;
     PLN: TRadioButton;
@@ -22,7 +21,8 @@ type
     KodUrzedu: TEdit;
     Label5: TLabel;
     Podmiot: TComboBox;
-    procedure Button1Click(Sender: TObject);
+    SaveDialog: TSaveDialog;
+    procedure btnGenerateClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -37,11 +37,13 @@ implementation
 
 {$R *.dfm}
 
-procedure TJPKForma.Button1Click(Sender: TObject);
+procedure TJPKForma.btnGenerateClick(Sender: TObject);
 var jpk: IXMLJPK; fa: IXMLFaktura; item: IXMLFakturaWiersz;
-podmiot, klient: TKlient; faktura: TFaktura; towar: TTowar;
-i, j, countFV, countItems: Cardinal; sumFV, sumItems: Extended; sum: TSuma;
+    podmiot: IXMLSprzedawcaType; klient: IXMLKlientType;
+    faktura: IXMLFakturaType; towar: IXMLTowarType;
+    i, j, countFV, countItems: Cardinal; sumFV, sumItems: Extended; sum: TSuma;
 begin
+
   jpk := NewJPK;
   jpk.SetAttributeNS('xmlns:etd', '', 'http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2016/01/25/eD/DefinicjeTypy/');
 
@@ -55,17 +57,19 @@ begin
     DataWytworzeniaJPK := DateTimeToStr(Date + Time, 'T');
     DataOd := DateToStr(DateFrom.Date);
     DataDo := DateToStr(DateTo.Date);
-    DomyslnyKodWaluty := 'PLN';
+    if PLN.Checked then
+      DomyslnyKodWaluty := 'PLN' else
+      DomyslnyKodWaluty := 'EUR';
     KodUrzedu := JPKForma.KodUrzedu.Text;
   end;
 
-  podmiot := Sprzed[JPKForma.Podmiot.ItemIndex];
+  podmiot := App.Sprzedawcy.Sprzedawca[JPKForma.Podmiot.ItemIndex];
 
   with jpk.Podmiot1 do
   begin
     IdentyfikatorPodmiotu.NIP := podmiot.NIP;
     IdentyfikatorPodmiotu.PelnaNazwa := podmiot.Nazwa1;
-    IdentyfikatorPodmiotu.REGON := '';
+//    IdentyfikatorPodmiotu.REGON := '';
     AdresPodmiotu.KodKraju := 'PL';
     AdresPodmiotu.Wojewodztwo := Wojewodztwa[podmiot.Wojew];
     AdresPodmiotu.Powiat := 'nowos¹decki';
@@ -82,17 +86,24 @@ begin
   sumFV := 0;
   sumItems := 0;
 
-  if FVIle > 0 then
+  if App.Faktury.Count > 0 then
   begin
-    for i := 0 to FVIle - 1 do
+    for i := 0 to App.Faktury.Count - 1 do
     begin
-      faktura := FV[i];
-      if faktura.Dane.Sprzed.NIP = podmiot.NIP then
+      faktura := App.Faktury.Faktura[i];
+
+      // warunki
+      if faktura.Deleted then continue;
+      if faktura.DataDok < DateFrom.Date then continue;
+      if faktura.DataDok > DateTo.Date then continue;
+      if faktura.Towary.Towar[0].PLN <> PLN.Checked then continue;
+
+      if faktura.Sprzedawca.NIP = podmiot.NIP then
       begin
-        klient := faktura.Dane.Kontra;
+        klient := faktura.Klient;
         fa := jpk.Faktura.Add;
         fa.Typ := 'G';
-        fa.P_1 := DateToStr(faktura.Dane.DataDok);
+        fa.P_1 := DateToStr(faktura.DataDok);
         fa.P_2A := IntToStr(i + 1);
         fa.P_3A := klient.Nazwa1;
         fa.P_3B := klient.Kod + ' ' + klient.Miasto + ', ' + klient.Ulica + ' ' + klient.NrDomu;
@@ -101,7 +112,7 @@ begin
         fa.P_4A := 'PL';
         fa.P_4B := podmiot.NIP;
 
-        sum := sumaTowarow(faktura.Towar);
+        sum := sumaTowarow(faktura.Towary);
         fa.P_13_1 := JPKPriceFormat(sum.Netto);
         fa.P_14_1 := JPKPriceFormat(sum.VAT);
         fa.P_15   := JPKPriceFormat(sum.Brutto);
@@ -123,11 +134,11 @@ begin
         sumFV := sumFV + sum.Brutto;
 
         // elementy faktury
-        if faktura.TowarIle > 1 then
+        if faktura.Towary.Count > 1 then
         begin
-          for j := 0 to faktura.TowarIle - 1 do
+          for j := 0 to faktura.Towary.Count - 1 do
           begin
-            towar := faktura.Towar[j];
+            towar := faktura.Towary.Towar[j];
             item := jpk.FakturaWiersz.Add;
             item.Typ := 'G';
             item.P_2B := IntToStr(i + 1);
@@ -148,6 +159,12 @@ begin
     end;
   end;
 
+  if countFV <= 0 then
+  begin
+     MessageBox(0, 'Nie znaleziono faktur do wygenerowania JPK', PChar(Application.Title), MB_ICONWARNING + MB_OK);
+     exit;
+  end;
+
   jpk.FakturaCtrl.LiczbaFaktur := IntToStr(countFV);
   jpk.FakturaCtrl.WartoscFaktur := JPKPriceFormat(sumFV);
 
@@ -163,17 +180,27 @@ begin
   jpk.FakturaWierszCtrl.LiczbaWierszyFaktur := IntToStr(countItems);
   jpk.FakturaWierszCtrl.WartoscWierszyFaktur := JPKPriceFormat(sumItems);
 
-  Memo1.Lines.Text := jpk.XML;
+  // domyœlna nazwa pliku
+  SaveDialog.FileName := 'JPK_' + jpk.Naglowek.DomyslnyKodWaluty + '_' +
+    jpk.Naglowek.DataOd + '_' + jpk.Naglowek.DataDo + '.xml';
+
+  if not SaveDialog.Execute then Exit;
+
+  jpk.OwnerDocument.SaveToFile(SaveDialog.FileName);
+  MessageBox(0, 'Wyeksportowano plik JPK', PChar(Application.Title), MB_ICONINFORMATION+MB_OK);
 end;
 
 procedure TJPKForma.FormCreate(Sender: TObject);
 var i: Word;
 begin
-  if SprzedIle > 0 then
+  DateTo.Date := now;
+  DateFrom.Date := now;
+  Podmiot.Items.Clear;
+  if App.Sprzedawcy.Count > 0 then
   begin
-    for i := 0 to SprzedIle - 1 do
+    for i := 0 to App.Sprzedawcy.Count - 1 do
     begin
-      Podmiot.Items.Add(Sprzed[i].Nazwa1);
+      Podmiot.Items.Add(App.Sprzedawcy.Sprzedawca[i].Nazwa1);
     end;
     Podmiot.ItemIndex := 0;
   end;

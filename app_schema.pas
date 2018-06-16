@@ -64,7 +64,6 @@ type
   IXMLKlientType = interface(IXMLNode)
     ['{53621094-F904-4B72-A86A-6D7AF8B58238}']
     { Property Accessors }
-    function getUid: Integer;
     function getIdentyf: WideString;
     function getNazwa1: WideString;
     function getNazwa2: WideString;
@@ -73,14 +72,14 @@ type
     function getMiasto: WideString;
     function getUlica: WideString;
     function getNrDomu: WideString;
-    function getWojew: WideString;
+    function getWojew: Byte;
     function getOddzial: WideString;
     function getNBanku1: WideString;
     function getNrKonta1: WideString;
     function getNBanku2: WideString;
     function getNrKonta2: WideString;
     function getUwagi: WideString;
-    procedure setUid(Value: Integer);
+    function isDeleted: Boolean;
     procedure setIdentyf(Value: WideString);
     procedure setNazwa1(Value: WideString);
     procedure setNazwa2(Value: WideString);
@@ -89,15 +88,15 @@ type
     procedure setMiasto(Value: WideString);
     procedure setUlica(Value: WideString);
     procedure setNrDomu(Value: WideString);
-    procedure setWojew(Value: WideString);
+    procedure setWojew(Value: Byte);
     procedure setOddzial(Value: WideString);
     procedure setNBanku1(Value: WideString);
     procedure setNrKonta1(Value: WideString);
     procedure setNBanku2(Value: WideString);
     procedure setNrKonta2(Value: WideString);
     procedure setUwagi(Value: WideString);
+    procedure setDeleted(Value: Boolean);
     { Methods & Properties }
-    property Uid: Integer read getUid write setUid;
     property Identyf: WideString read getIdentyf write setIdentyf;
     property Nazwa1: WideString read getNazwa1 write setNazwa1;
     property Nazwa2: WideString read getNazwa2 write setNazwa2;
@@ -106,13 +105,14 @@ type
     property Miasto: WideString read getMiasto write setMiasto;
     property Ulica: WideString read getUlica write setUlica;
     property NrDomu: WideString read getNrDomu write setNrDomu;
-    property Wojew: WideString read getWojew write setWojew;
+    property Wojew: Byte read getWojew write setWojew;
     property Oddzial: WideString read getOddzial write setOddzial;
     property NBanku1: WideString read getNBanku1 write setNBanku1;
     property NrKonta1: WideString read getNrKonta1 write setNrKonta1;
     property NBanku2: WideString read getNBanku2 write setNBanku2;
     property NrKonta2: WideString read getNrKonta2 write setNrKonta2;
     property Uwagi: WideString read getUwagi write setUwagi;
+    property Deleted: Boolean read isDeleted write setDeleted;
   end;
 
 { IXMLSprzedawcyType }
@@ -132,7 +132,6 @@ type
   IXMLSprzedawcaType = interface(IXMLNode)
     ['{7C1C1BC5-458D-4ACA-AFFE-F4E452214791}']
     { Property Accessors }
-    function getUid: Integer;
     function getIdentyf: WideString;
     function getNazwa1: WideString;
     function getNazwa2: WideString;
@@ -141,14 +140,14 @@ type
     function getMiasto: WideString;
     function getUlica: WideString;
     function getNrDomu: WideString;
-    function getWojew: WideString;
+    function getWojew: Byte;
     function getOddzial: WideString;
     function getNBanku1: WideString;
     function getNrKonta1: WideString;
     function getNBanku2: WideString;
     function getNrKonta2: WideString;
     function getUwagi: WideString;
-    procedure setUid(Value: Integer);
+    function isDeleted: Boolean;
     procedure setIdentyf(Value: WideString);
     procedure setNazwa1(Value: WideString);
     procedure setNazwa2(Value: WideString);
@@ -157,15 +156,15 @@ type
     procedure setMiasto(Value: WideString);
     procedure setUlica(Value: WideString);
     procedure setNrDomu(Value: WideString);
-    procedure setWojew(Value: WideString);
+    procedure setWojew(Value: Byte);
     procedure setOddzial(Value: WideString);
     procedure setNBanku1(Value: WideString);
     procedure setNrKonta1(Value: WideString);
     procedure setNBanku2(Value: WideString);
     procedure setNrKonta2(Value: WideString);
     procedure setUwagi(Value: WideString);
+    procedure setDeleted(Value: Boolean);
     { Methods & Properties }
-    property Uid: Integer read getUid write setUid;
     property Identyf: WideString read getIdentyf write setIdentyf;
     property Nazwa1: WideString read getNazwa1 write setNazwa1;
     property Nazwa2: WideString read getNazwa2 write setNazwa2;
@@ -174,13 +173,14 @@ type
     property Miasto: WideString read getMiasto write setMiasto;
     property Ulica: WideString read getUlica write setUlica;
     property NrDomu: WideString read getNrDomu write setNrDomu;
-    property Wojew: WideString read getWojew write setWojew;
+    property Wojew: Byte read getWojew write setWojew;
     property Oddzial: WideString read getOddzial write setOddzial;
     property NBanku1: WideString read getNBanku1 write setNBanku1;
     property NrKonta1: WideString read getNrKonta1 write setNrKonta1;
     property NBanku2: WideString read getNBanku2 write setNBanku2;
     property NrKonta2: WideString read getNrKonta2 write setNrKonta2;
-    property Uwagi: WideString read getUwagi write setUwagi;
+    property Uwagi: WideString read getUwagi write setUwagi; 
+    property Deleted: Boolean read isDeleted write setDeleted;
   end;
 
 { IXMLFakturyType }
@@ -200,7 +200,6 @@ type
   IXMLFakturaType = interface(IXMLNode)
     ['{7B5DD1B2-0197-4820-8C15-15D41990FD28}']
     { Property Accessors }
-    function getUid: Integer;
     function getKlient: IXMLKlientType;
     function getSprzedawca: IXMLSprzedawcaType;
     function getMiejsc: WideString;
@@ -214,8 +213,8 @@ type
     function getTransport: WideString;
     function getUwagi: WideString;
     function getKurs: IXMLKursType;
-    function getTowary: IXMLTowaryType;
-    procedure setUid(Value: Integer);
+    function getTowary: IXMLTowaryType; 
+    function isDeleted: Boolean;
     procedure setMiejsc(Value: WideString);
     procedure setDataDok(Value: TDateTime);
     procedure setTypFak(Value: WideString);
@@ -225,10 +224,10 @@ type
     procedure setSposZapl(Value: WideString);
     procedure setTermPlat(Value: TDateTime);
     procedure setTransport(Value: WideString);
-    procedure setUwagi(Value: WideString);
+    procedure setUwagi(Value: WideString);   
+    procedure setDeleted(Value: Boolean);
     { Methods & Properties }
-    
-    property Uid: Integer read getUid write setUid;
+
     property Klient: IXMLKlientType read getKlient;
     property Sprzedawca: IXMLSprzedawcaType read getSprzedawca;
     property Miejsc: WideString read getMiejsc write setMiejsc;
@@ -242,7 +241,8 @@ type
     property Transport: WideString read getTransport write setTransport;
     property Uwagi: WideString read getUwagi write setUwagi;
     property Kurs: IXMLKursType read getKurs;
-    property Towary: IXMLTowaryType read getTowary;
+    property Towary: IXMLTowaryType read getTowary;  
+    property Deleted: Boolean read isDeleted write setDeleted;
   end;
 
 { IXMLKursType }
@@ -305,7 +305,7 @@ type
     { Methods & Properties }
     property Nazwa: WideString read getNazwa write setNazwa;
     property Jm: WideString read getJm write setJm;
-    property PLN: Boolean read getPLN write setPLN;
+    property PLN: Boolean read getPLN write setPLN; 
     property Ilosc: double read getIlosc write setIlosc;
     property CenaNSzt: double read getCenaNSzt write setCenaNSzt;
     property Rabat: Byte read getRabat write setRabat;
@@ -396,7 +396,6 @@ type
   TXMLKlientType = class(TXMLNode, IXMLKlientType)
   protected
     { IXMLKlientType }
-    function getUid: Integer;
     function getIdentyf: WideString;
     function getNazwa1: WideString;
     function getNazwa2: WideString;
@@ -405,14 +404,14 @@ type
     function getMiasto: WideString;
     function getUlica: WideString;
     function getNrDomu: WideString;
-    function getWojew: WideString;
+    function getWojew: Byte;
     function getOddzial: WideString;
     function getNBanku1: WideString;
     function getNrKonta1: WideString;
     function getNBanku2: WideString;
     function getNrKonta2: WideString;
     function getUwagi: WideString;
-    procedure setUid(Value: Integer);
+    function isDeleted: Boolean;
     procedure setIdentyf(Value: WideString);
     procedure setNazwa1(Value: WideString);
     procedure setNazwa2(Value: WideString);
@@ -421,13 +420,14 @@ type
     procedure setMiasto(Value: WideString);
     procedure setUlica(Value: WideString);
     procedure setNrDomu(Value: WideString);
-    procedure setWojew(Value: WideString);
+    procedure setWojew(Value: Byte);
     procedure setOddzial(Value: WideString);
     procedure setNBanku1(Value: WideString);
     procedure setNrKonta1(Value: WideString);
     procedure setNBanku2(Value: WideString);
     procedure setNrKonta2(Value: WideString);
     procedure setUwagi(Value: WideString);
+    procedure setDeleted(Value: Boolean);
   end;
 
 { TXMLSprzedawcyType }
@@ -447,7 +447,6 @@ type
   TXMLSprzedawcaType = class(TXMLNode, IXMLSprzedawcaType)
   protected
     { IXMLSprzedawcaType }
-    function getUid: Integer;
     function getIdentyf: WideString;
     function getNazwa1: WideString;
     function getNazwa2: WideString;
@@ -456,14 +455,14 @@ type
     function getMiasto: WideString;
     function getUlica: WideString;
     function getNrDomu: WideString;
-    function getWojew: WideString;
+    function getWojew: Byte;
     function getOddzial: WideString;
     function getNBanku1: WideString;
     function getNrKonta1: WideString;
     function getNBanku2: WideString;
     function getNrKonta2: WideString;
-    function getUwagi: WideString;
-    procedure setUid(Value: Integer);
+    function getUwagi: WideString;   
+    function isDeleted: Boolean;
     procedure setIdentyf(Value: WideString);
     procedure setNazwa1(Value: WideString);
     procedure setNazwa2(Value: WideString);
@@ -472,13 +471,14 @@ type
     procedure setMiasto(Value: WideString);
     procedure setUlica(Value: WideString);
     procedure setNrDomu(Value: WideString);
-    procedure setWojew(Value: WideString);
+    procedure setWojew(Value: Byte);
     procedure setOddzial(Value: WideString);
     procedure setNBanku1(Value: WideString);
     procedure setNrKonta1(Value: WideString);
     procedure setNBanku2(Value: WideString);
     procedure setNrKonta2(Value: WideString);
     procedure setUwagi(Value: WideString);
+    procedure setDeleted(Value: Boolean);
   end;
 
 { TXMLFakturyType }
@@ -498,7 +498,6 @@ type
   TXMLFakturaType = class(TXMLNode, IXMLFakturaType)
   protected
     { IXMLFakturaType }
-    function getUid: Integer;
     function getKlient: IXMLKlientType;
     function getSprzedawca: IXMLSprzedawcaType;
     function getMiejsc: WideString;
@@ -513,7 +512,7 @@ type
     function getUwagi: WideString;
     function getKurs: IXMLKursType;
     function getTowary: IXMLTowaryType;
-    procedure setUid(Value: Integer);
+    function isDeleted: Boolean;
     procedure setMiejsc(Value: WideString);
     procedure setDataDok(Value: TDateTime);
     procedure setTypFak(Value: WideString);
@@ -524,6 +523,7 @@ type
     procedure setTermPlat(Value: TDateTime);
     procedure setTransport(Value: WideString);
     procedure setUwagi(Value: WideString);
+    procedure setDeleted(Value: Boolean);
   public
     procedure AfterConstruction; override;
   end;
@@ -696,14 +696,18 @@ end;
 
 { TXMLKlientType }
 
-function TXMLKlientType.getUid: Integer;
-begin
-  Result := ChildNodes['Uid'].NodeValue;
+function TXMLKlientType.isDeleted: Boolean;
+begin 
+  try
+    Result := ChildNodes['Deleted'].NodeValue;    
+  except
+    Result := False; 
+  end;
 end;
 
-procedure TXMLKlientType.setUid(Value: Integer);
+procedure TXMLKlientType.setDeleted(Value: Boolean);
 begin
-  ChildNodes['Uid'].NodeValue := Value;
+  ChildNodes['Deleted'].NodeValue := Value;
 end;
 
 function TXMLKlientType.getIdentyf: WideString;
@@ -786,12 +790,16 @@ begin
   ChildNodes['NrDomu'].NodeValue := Value;
 end;
 
-function TXMLKlientType.getWojew: WideString;
+function TXMLKlientType.getWojew: Byte;
 begin
-  Result := ChildNodes['Wojew'].Text;
+  try
+    Result := ChildNodes['Wojew'].NodeValue;  
+  except
+    Result := 0;    
+  end;
 end;
 
-procedure TXMLKlientType.setWojew(Value: WideString);
+procedure TXMLKlientType.setWojew(Value: Byte);
 begin
   ChildNodes['Wojew'].NodeValue := Value;
 end;
@@ -883,14 +891,18 @@ end;
 
 { TXMLSprzedawcaType }
 
-function TXMLSprzedawcaType.getUid: Integer;
-begin
-  Result := ChildNodes['Uid'].NodeValue;
+function TXMLSprzedawcaType.isDeleted: Boolean;
+begin 
+  try
+    Result := ChildNodes['Deleted'].NodeValue;  
+  except
+    Result := False;    
+  end;
 end;
 
-procedure TXMLSprzedawcaType.setUid(Value: Integer);
+procedure TXMLSprzedawcaType.setDeleted(Value: Boolean);
 begin
-  ChildNodes['Uid'].NodeValue := Value;
+  ChildNodes['Deleted'].NodeValue := Value;
 end;
 
 function TXMLSprzedawcaType.getIdentyf: WideString;
@@ -973,12 +985,16 @@ begin
   ChildNodes['NrDomu'].NodeValue := Value;
 end;
 
-function TXMLSprzedawcaType.getWojew: WideString;
+function TXMLSprzedawcaType.getWojew: Byte;
 begin
-  Result := ChildNodes['Wojew'].Text;
+  try
+    Result := ChildNodes['Wojew'].NodeValue;  
+  except
+    Result := 0;    
+  end;
 end;
 
-procedure TXMLSprzedawcaType.setWojew(Value: WideString);
+procedure TXMLSprzedawcaType.setWojew(Value: Byte);
 begin
   ChildNodes['Wojew'].NodeValue := Value;
 end;
@@ -1079,14 +1095,18 @@ begin
   inherited;
 end;  
 
-function TXMLFakturaType.getUid: Integer;
-begin
-  Result := ChildNodes['Uid'].NodeValue;
+function TXMLFakturaType.isDeleted: Boolean;
+begin  
+  try
+    Result := ChildNodes['Deleted'].NodeValue;  
+  except
+    Result := False;    
+  end;
 end;
 
-procedure TXMLFakturaType.setUid(Value: Integer);
+procedure TXMLFakturaType.setDeleted(Value: Boolean);
 begin
-  ChildNodes['Uid'].NodeValue := Value;
+  ChildNodes['Deleted'].NodeValue := Value;
 end;
 
 function TXMLFakturaType.getKlient: IXMLKlientType;

@@ -177,7 +177,7 @@ object Towar: TTowar
     Width = 291
     Height = 24
     Anchors = [akLeft, akTop, akRight]
-    ItemHeight = 16
+    ItemHeight = 0
     MaxLength = 255
     TabOrder = 0
   end
