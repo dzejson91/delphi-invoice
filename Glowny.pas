@@ -156,7 +156,7 @@ var
   Setup: TSetup;
 
   function Maska(S, Mask: String): Boolean;
-  function NrFakExist(NrFak: string): Boolean;
+  function NrFakExist(NrFak: string; sprzedawca: IXMLSprzedawcaType): Boolean;
   
   procedure CopyXMLSprzedawca(src, dst: IXMLSprzedawcaType);
   procedure CopyXMLKlient(src, dst: IXMLKlientType);
@@ -187,12 +187,12 @@ begin
     end;
 end;
 
-function NrFakExist(NrFak: string): Boolean;
+function NrFakExist(NrFak: string; sprzedawca: IXMLSprzedawcaType): Boolean;
 var i: Cardinal;
 begin
   if App.Faktury.Count > 0 then
     for i := 0 to App.Faktury.Count - 1 do
-      if App.Faktury.Faktura[i].NrFak = NrFak then
+      if (App.Faktury.Faktura[i].NrFak = NrFak) and (App.Faktury.Faktura[i].Sprzedawca.NIP = sprzedawca.NIP) then
       begin
         Result := true;
         exit;

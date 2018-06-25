@@ -192,7 +192,7 @@ begin
   if LSpr.ItemIndex < 0 then Exit;
   if LKon.ItemIndex < 0 then Exit;
 
-  if NrFakExist(Nr.Text) then
+  if NrFakExist(Nr.Text, App.Sprzedawcy.Sprzedawca[LSpr.ItemIndex]) then
   begin
     if MessageBox(0, 'Numer faktury jest ju¿ u¿ywany! Jesteœ pewnien(a)?', PChar(Application.Title), MB_ICONQUESTION+MB_YESNO) <> 6 then
       Exit;

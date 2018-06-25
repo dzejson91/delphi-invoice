@@ -9,15 +9,25 @@ File_6=TSourceModule,'C:\Users\Krystian\Desktop\FV\Kontrahenci.pas',0,1,185,4,18
 File_7=TSourceModule,'d:\programy\delphi_2007_lite\SOURCE\WIN32\XML\XMLIntf.pas',0,1,1,25,129,0,0,,
 
 [Modules]
-Module0=C:\Users\Krystian\Desktop\FV\Ustawienia.pas
-Module1=C:\Users\Krystian\Desktop\FV\Project1.dproj
-Module2=C:\Users\Krystian\Desktop\FV\JPKForm.pas
-Module3=C:\Users\Krystian\Desktop\FV\Archiwum.pas
-Module4=C:\Users\Krystian\Desktop\FV\Glowny.pas
-Module5=C:\Users\Krystian\Desktop\FV\Wystawienie.pas
+Module0=C:\Users\Krystian\Desktop\FV\Wystawienie.pas
+Module1=C:\Users\Krystian\Desktop\FV\Glowny.pas
+Module2=C:\Users\Krystian\Desktop\FV\Ustawienia.pas
+Module3=C:\Users\Krystian\Desktop\FV\Project1.dproj
+Module4=C:\Users\Krystian\Desktop\FV\JPKForm.pas
+Module5=C:\Users\Krystian\Desktop\FV\Archiwum.pas
 Module6=C:\Users\Krystian\Desktop\FV\Drukowanie.pas
 Count=7
 EditWindowCount=1
+
+[C:\Users\Krystian\Desktop\FV\Wystawienie.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
+
+[C:\Users\Krystian\Desktop\FV\Glowny.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
 
 [C:\Users\Krystian\Desktop\FV\Ustawienia.pas]
 ModuleType=TSourceModule
@@ -30,19 +40,9 @@ ModuleType=TBaseProject
 [C:\Users\Krystian\Desktop\FV\JPKForm.pas]
 ModuleType=TSourceModule
 FormState=1
-FormOnTop=1
-
-[C:\Users\Krystian\Desktop\FV\Archiwum.pas]
-ModuleType=TSourceModule
-FormState=1
-FormOnTop=1
-
-[C:\Users\Krystian\Desktop\FV\Glowny.pas]
-ModuleType=TSourceModule
-FormState=1
 FormOnTop=0
 
-[C:\Users\Krystian\Desktop\FV\Wystawienie.pas]
+[C:\Users\Krystian\Desktop\FV\Archiwum.pas]
 ModuleType=TSourceModule
 FormState=1
 FormOnTop=0
@@ -54,7 +54,7 @@ FormOnTop=0
 
 [EditWindow0]
 ViewCount=7
-CurrentEditView=C:\Users\Krystian\Desktop\FV\Ustawienia.pas
+CurrentEditView=C:\Users\Krystian\Desktop\FV\Wystawienie.pas
 View0=0
 View1=1
 View2=2
@@ -106,8 +106,8 @@ EditViewName=C:\Users\Krystian\Desktop\FV\Project1.dpr
 [View1]
 CustomEditViewType=TEditView
 Module=C:\Users\Krystian\Desktop\FV\Ustawienia.pas
-CursorX=33
-CursorY=77
+CursorX=26
+CursorY=74
 TopLine=64
 LeftCol=1
 Elisions=
@@ -128,13 +128,13 @@ EditViewName=Borland.FormDesignerView
 [View3]
 CustomEditViewType=TEditView
 Module=C:\Users\Krystian\Desktop\FV\Glowny.pas
-CursorX=58
-CursorY=562
-TopLine=545
+CursorX=68
+CursorY=159
+TopLine=151
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=C:\Users\Krystian\Desktop\FV\Glowny.pas
 
 [View4]
 CustomEditViewType=TEditView
@@ -150,9 +150,9 @@ EditViewName=Borland.FormDesignerView
 [View5]
 CustomEditViewType=TEditView
 Module=C:\Users\Krystian\Desktop\FV\Wystawienie.pas
-CursorX=29
-CursorY=251
-TopLine=238
+CursorX=23
+CursorY=193
+TopLine=181
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -484,8 +484,8 @@ SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Font.Orientation,
-ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0,Font=1,GlassFrame=0,HorzScrollBar=0,Margins=0,Padding=1,Font.Style=1
+SelectedItem=Action,
+ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0,Font=0,GlassFrame=0,HorzScrollBar=0
 
 [ModelViewTool]
 PercentageSizes=1
