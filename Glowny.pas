@@ -157,7 +157,9 @@ var
 
   function Maska(S, Mask: String): Boolean;
   function NrFakExist(NrFak: string; sprzedawca: IXMLSprzedawcaType): Boolean;
-  
+
+  procedure SaveXML(fileName: string);
+
   procedure CopyXMLSprzedawca(src, dst: IXMLSprzedawcaType);
   procedure CopyXMLKlient(src, dst: IXMLKlientType);
   procedure CopyXMLKurs(src, dst: IXMLKursType);

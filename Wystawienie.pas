@@ -231,11 +231,15 @@ begin
     if i = 0 then F.Kurs.Euro:=not t.PLN;
   end;
 
+  // podgl¹d
   if (Sender as TButton).Tag = 1 then
-    Drukuj.Druk(F, True) else
+  begin
+    Drukuj.Druk(F, True);
+  end else
+  begin // druk i zapis
     if F.TypDok = Oryg.Items.Strings[0] then
     begin
-      CopyXMLFaktura(F, App.Faktury.Add);
+      CopyXMLFaktura(F, App.Faktury.Add); // zapis to archiwum
       Drukuj.Druk(F, False);
       Drukuj.Druk(F, False);
       end else
@@ -243,6 +247,8 @@ begin
       CopyXMLFaktura(F, App.Faktury.Add);
       Drukuj.Druk(F, False);
     end;
+    SaveXML(Path + PlikXML); // zapis pliku
+  end;
 end;
 
 procedure TWystaw.SpeedButton1Click(Sender: TObject);
