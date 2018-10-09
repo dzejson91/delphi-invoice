@@ -290,6 +290,7 @@ type
     function getRabat: Byte;
     function getWartNetto: double;
     function getVatProc: Byte;
+    function getVatNd: Boolean;
     function getWartVAT: double;
     function getWartBrutto: double;
     procedure setNazwa(Value: WideString);
@@ -300,6 +301,7 @@ type
     procedure setRabat(Value: Byte);
     procedure setWartNetto(Value: double);
     procedure setVatProc(Value: Byte);
+    procedure setVatNd(Value: Boolean);
     procedure setWartVAT(Value: double);
     procedure setWartBrutto(Value: double);
     { Methods & Properties }
@@ -311,6 +313,7 @@ type
     property Rabat: Byte read getRabat write setRabat;
     property WartNetto: double read getWartNetto write setWartNetto;
     property VatProc: Byte read getVatProc write setVatProc;
+    property VatNd: Boolean read getVatNd write setVatNd;
     property WartVAT: double read getWartVAT write setWartVAT;
     property WartBrutto: double read getWartBrutto write setWartBrutto;
   end;
@@ -568,6 +571,7 @@ type
     function getRabat: Byte;
     function getWartNetto: double;
     function getVatProc: Byte;
+    function getVatNd: Boolean;
     function getWartVAT: double;
     function getWartBrutto: double;
     procedure setNazwa(Value: WideString);
@@ -578,6 +582,7 @@ type
     procedure setRabat(Value: Byte);
     procedure setWartNetto(Value: double);
     procedure setVatProc(Value: Byte);
+    procedure setVatNd(Value: Boolean);
     procedure setWartVAT(Value: double);
     procedure setWartBrutto(Value: double);
   end;
@@ -1376,6 +1381,16 @@ end;
 procedure TXMLTowarType.setVatProc(Value: Byte);
 begin
   ChildNodes['VatProc'].NodeValue := Value;
+end;
+
+function TXMLTowarType.getVatNd: Boolean;
+begin
+  Result := ChildNodes['VatNd'].NodeValue;
+end;
+
+procedure TXMLTowarType.setVatNd(Value: Boolean);
+begin
+  ChildNodes['VatNd'].NodeValue := Value;
 end;
 
 function TXMLTowarType.getWartVAT: double;

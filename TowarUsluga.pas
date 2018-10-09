@@ -42,6 +42,7 @@ type
     Label5: TLabel;
     Eur: TLabel;
     Button3: TButton;
+    cbVatNd: TCheckBox;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure PVATChange(Sender: TObject);
@@ -49,6 +50,8 @@ type
     procedure UstClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure cbVatNdClick(Sender: TObject);
+    procedure cbVatNdKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -101,6 +104,24 @@ begin
   finally
     nie_zmieniaj := false;
   end;
+end;
+
+procedure TTowar.cbVatNdClick(Sender: TObject);
+begin
+  if cbVatNd.Checked then
+  begin
+    PVAT.Enabled := false;
+    PVAT.Text := '0';
+  end else
+  begin
+    PVAT.Enabled := true;
+  end;
+end;
+
+procedure TTowar.cbVatNdKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  cbVatNdClick(Sender);
 end;
 
 procedure TTowar.PVATChange(Sender: TObject);

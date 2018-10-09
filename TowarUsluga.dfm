@@ -83,7 +83,7 @@ object Towar: TTowar
   end
   object Label9: TLabel
     Left = 79
-    Top = 188
+    Top = 197
     Width = 63
     Height = 16
     Alignment = taRightJustify
@@ -91,14 +91,14 @@ object Towar: TTowar
   end
   object zl2: TLabel
     Left = 232
-    Top = 188
+    Top = 197
     Width = 9
     Height = 16
     Caption = 'z'#322
   end
   object Label11: TLabel
     Left = 115
-    Top = 156
+    Top = 165
     Width = 27
     Height = 16
     Alignment = taRightJustify
@@ -106,21 +106,21 @@ object Towar: TTowar
   end
   object Label12: TLabel
     Left = 216
-    Top = 156
+    Top = 165
     Width = 12
     Height = 16
     Caption = '%'
   end
   object zl3: TLabel
     Left = 232
-    Top = 220
+    Top = 229
     Width = 9
     Height = 16
     Caption = 'z'#322
   end
   object Label14: TLabel
     Left = 81
-    Top = 220
+    Top = 229
     Width = 61
     Height = 16
     Alignment = taRightJustify
@@ -128,14 +128,14 @@ object Towar: TTowar
   end
   object zl4: TLabel
     Left = 232
-    Top = 252
+    Top = 261
     Width = 9
     Height = 16
     Caption = 'z'#322
   end
   object Label16: TLabel
     Left = 78
-    Top = 252
+    Top = 261
     Width = 64
     Height = 16
     Alignment = taRightJustify
@@ -177,7 +177,7 @@ object Towar: TTowar
     Width = 291
     Height = 24
     Anchors = [akLeft, akTop, akRight]
-    ItemHeight = 0
+    ItemHeight = 16
     MaxLength = 255
     TabOrder = 0
   end
@@ -240,7 +240,7 @@ object Towar: TTowar
   end
   object WartNetto: TEdit
     Left = 152
-    Top = 184
+    Top = 194
     Width = 73
     Height = 24
     Color = cl3DLight
@@ -250,7 +250,7 @@ object Towar: TTowar
   end
   object PVAT: TSpinEdit
     Left = 152
-    Top = 152
+    Top = 162
     Width = 57
     Height = 26
     MaxValue = 99
@@ -261,7 +261,7 @@ object Towar: TTowar
   end
   object WartVat: TEdit
     Left = 153
-    Top = 218
+    Top = 228
     Width = 73
     Height = 24
     Color = cl3DLight
@@ -273,7 +273,7 @@ object Towar: TTowar
   end
   object WartBrutto: TEdit
     Left = 152
-    Top = 248
+    Top = 258
     Width = 73
     Height = 24
     TabOrder = 9
@@ -313,12 +313,22 @@ object Towar: TTowar
       'EURO')
   end
   object Button3: TButton
-    Left = 247
-    Top = 248
+    Left = 263
+    Top = 258
     Width = 60
     Height = 24
     Caption = 'przelicz'
     TabOrder = 13
     OnClick = Button3Click
+  end
+  object cbVatNd: TCheckBox
+    Left = 234
+    Top = 166
+    Width = 97
+    Height = 17
+    Caption = 'Nie dotyczy'
+    TabOrder = 14
+    OnClick = cbVatNdClick
+    OnKeyUp = cbVatNdKeyUp
   end
 end

@@ -283,6 +283,7 @@ begin
   dst.Rabat := src.Rabat;
   dst.WartNetto := src.WartNetto;
   dst.VatProc := src.VatProc;
+  dst.VatNd := src.VatNd;
   dst.WartVAT := src.WartVAT;
   dst.WartBrutto := src.WartBrutto;
 end;
@@ -632,6 +633,7 @@ begin
         xt.Rabat := t.Rabat;
         xt.WartNetto := t.WartNetto;
         xt.VatProc := t.VatProc;
+//        xt.VatNd := t.VatNd; brak w strukturach - s¹ stare - teraz tylko XML
         xt.WartVAT := t.WartVAT;
         xt.WartBrutto := t.WartBrutto;
       end;

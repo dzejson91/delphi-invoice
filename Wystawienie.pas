@@ -175,6 +175,7 @@ begin
       L.SubItems.Add(FormatFloat('0', PVat.Value));
       L.SubItems.Add(WartVat.Text);
       L.SubItems.Add(WartBrutto.Text);
+      L.SubItems.Add(BoolToStr(cbVatNd.Checked));
     end;
   end;
 end;
@@ -228,6 +229,7 @@ begin
     t.VatProc:=StrToInt(Lista.Items[i].SubItems.Strings[7]);
     t.WartVAT:=StrToFloat(Lista.Items[i].SubItems.Strings[8]);
     t.WartBrutto:=StrToFloat(Lista.Items[i].SubItems.Strings[9]);
+    t.VatNd:=StrToBool(Lista.Items[i].SubItems.Strings[10]);
     if i = 0 then F.Kurs.Euro:=not t.PLN;
   end;
 
