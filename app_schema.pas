@@ -13,7 +13,7 @@ unit app_schema;
 
 interface
 
-uses Variants, xmldom, XMLDoc, XMLIntf;
+uses Variants, xmldom, XMLDoc, XMLIntf, SysUtils;
 
 type
 
@@ -1385,7 +1385,9 @@ end;
 
 function TXMLTowarType.getVatNd: Boolean;
 begin
-  Result := ChildNodes['VatNd'].NodeValue;
+  if not VarIsNull(ChildNodes['VatNd'].NodeValue) then
+    Result := ChildNodes['VatNd'].NodeValue else
+    Result := False;
 end;
 
 procedure TXMLTowarType.setVatNd(Value: Boolean);
