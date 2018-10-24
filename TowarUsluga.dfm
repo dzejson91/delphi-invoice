@@ -326,7 +326,7 @@ object Towar: TTowar
     Top = 166
     Width = 97
     Height = 17
-    Caption = 'Nie dotyczy'
+    Caption = 'Nie podlega'
     TabOrder = 14
     OnClick = cbVatNdClick
     OnKeyUp = cbVatNdKeyUp

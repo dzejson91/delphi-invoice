@@ -257,7 +257,7 @@ begin
 
     Font.Size:=24; Font.Style:=[fsBold];
     TextOut(Marg*2, PozY, 'Faktura VAT');
-
+                                             
     Tmp:=F.TypFak+' '+F.NrFak;
     Font.Size:=18; Font.Style:=[];
     TextOut((Printer.PageWidth-TextWidth(Tmp)) div 2, PozY + Marg, Tmp);
@@ -409,13 +409,13 @@ begin
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[7].X), PozY, Marg+GetProc(MaxX, CTab1[7].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
         Tmp:=FormatFloat('0', towar.VatProc)+' %';
-        if towar.VatNd then Tmp:= 'nd';
+        if towar.VatNd then Tmp:= 'np';
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[8].X), PozY, Marg+GetProc(MaxX, CTab1[8].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 2, TextHeight(TH), False);
 
         if towar.PLN then
           Tmp:=FormatFloat('0.00', towar.WartVAT)+VPL else
           Tmp:=FormatFloat('0.00', towar.WartVAT * F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', towar.WartVAT)+VEU;
-        if towar.VatNd then Tmp:= 'nd ';
+        if towar.VatNd then Tmp:= 'np ';
         MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, CTab1[9].X), PozY, Marg+GetProc(MaxX, CTab1[9].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
         if towar.PLN then
@@ -468,7 +468,7 @@ begin
     if (F.Towary.Count > 0) and (not F.Towary.Towar[0].PLN) then
       Tmp:=FormatFloat('0.00', D*F.Kurs.Kurs)+VPL+#13+FormatFloat('0.00', D)+VEU else
       Tmp:=FormatFloat('0.00', D)+VPL;
-    if towar.VatNd then Tmp:= 'nd ';
+    if towar.VatNd then Tmp:= 'np ';
     MalujText(Printer.Canvas, Rect(Marg+GetProc(MaxX, Tab2[3].X), PozY, Marg+GetProc(MaxX, Tab2[3].Y), PozY+Round(TextHeight(TH)*2.2)), Tmp, 3, TextHeight(TH), False);
 
    D:=0;
